@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Library_System_Management.Helpers;
 using Library_System_Management.Models;
 using Library_System_Management.Services;
 
@@ -10,7 +11,6 @@ namespace Library_System_Management.Views
     public partial class BookWindow : Window
     {
         private List<Book> books;
-
         public BookWindow()
         {
             InitializeComponent();

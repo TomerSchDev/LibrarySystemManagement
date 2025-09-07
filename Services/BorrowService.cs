@@ -10,6 +10,12 @@ namespace Library_System_Management.Services
     {
         public static void IssueBook(int bookId, int memberId, DateTime? returnDate)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian))
+            {
+                MessageBox.Show("couldn't insert borrowed book : Not enough Permission" , "Warnning", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+
             var borrowedBook = new BorrowedBook
             {
                 BookId = bookId,
@@ -30,6 +36,11 @@ namespace Library_System_Management.Services
 
         public static void ReturnBook(int borrowId)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian))
+            {
+                MessageBox.Show("couldn't return borrowed book : Not enough Permission" , "Warnning", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
             List<BorrowedBook> borows;
             try
             {

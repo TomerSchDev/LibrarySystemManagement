@@ -1,5 +1,12 @@
 ﻿namespace Library_System_Management.Models;
 
+public enum UserRole
+{
+    Member = 0,
+    Librarian = 1,
+    Admin = 2
+}
+
 public class User()
 {
     public User(string username, string password) : this()
@@ -16,10 +23,6 @@ public class User()
        return Username == user.Username && Password == user.Password;
     }
 
-    public override string? ToString()
-    {
-        return base.ToString();
-    }
 
     public bool IsUser(User user)
     {
@@ -29,5 +32,5 @@ public class User()
     public int UserID { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
-    public string UserType { get; set; } // Admin or Member
+    public UserRole Role { get; set; } // Admin or Member
 }

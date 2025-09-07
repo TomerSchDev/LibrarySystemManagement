@@ -9,6 +9,7 @@ namespace Library_System_Management.Services
     {
         public static bool AddBook(Book book)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian)) return false;
             try
             {
                 DatabaseManager.Insert(book);
@@ -25,6 +26,8 @@ namespace Library_System_Management.Services
 
         public static bool UpdateBook(Book book)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian)) return false;
+
             try
             {
                 DatabaseManager.Update(book);
@@ -41,6 +44,8 @@ namespace Library_System_Management.Services
 
         public static bool DeleteBook(int id)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Admin)) return false;
+
             try
             {
                 DatabaseManager.Delete<Book>(id);

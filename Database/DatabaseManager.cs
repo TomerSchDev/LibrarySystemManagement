@@ -46,7 +46,7 @@ namespace Library_System_Management.Database
             cmd.CommandText = "INSERT INTO User (Username, Password, UserType) VALUES (@u, @p, @t);";
             cmd.Parameters.AddWithValue("@u", "admin");
             cmd.Parameters.AddWithValue("@p", "admin123");
-            cmd.Parameters.AddWithValue("@t", "Admin");
+            cmd.Parameters.AddWithValue("@t", UserRole.Admin);
             cmd.ExecuteNonQuery();
         }
 

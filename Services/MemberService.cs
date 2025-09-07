@@ -9,6 +9,10 @@ namespace Library_System_Management.Services
     {
         public static void AddMember(Member member)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian))
+            {
+                MessageBox.Show("couldn't add new Member : Not enough Permission" , "Warnning", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             try
             {
                 DatabaseManager.Insert(member);
@@ -16,7 +20,6 @@ namespace Library_System_Management.Services
             catch (Exception e)
             {
                 MessageBox.Show("couldn't insert member to DatabaseManager with expectation : "+e.Message);
-                return ;
             }
         }
 
@@ -38,6 +41,10 @@ namespace Library_System_Management.Services
 
         public static void UpdateMember(Member member)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian))
+            {
+                MessageBox.Show("couldn't update Member : Not enough Permission" , "Warnning", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             try
             {
                 DatabaseManager.Update(member);
@@ -51,6 +58,10 @@ namespace Library_System_Management.Services
 
         public static void DeleteMember(int memberId)
         {
+            if (!SessionHelperService.IsEnoughPermission(UserRole.Admin))
+            {
+                MessageBox.Show("couldn't remove Member : Not enough Permission" , "Warnning", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             try
             {
                DatabaseManager.Delete<Member>(memberId);

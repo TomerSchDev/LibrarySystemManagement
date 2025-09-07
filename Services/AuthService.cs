@@ -13,5 +13,6 @@ namespace Library_System_Management.Services
             var users = DatabaseManager.SelectAll<User>();
             return users.FirstOrDefault(user => user.IsUser(loginUser));
         }
+        
     }
 }
