@@ -1,0 +1,14 @@
+﻿<Window x:Class="Library_System_Management.Views.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dashboard" Height="400" Width="400">
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="200">
+            <Button Content="Manage Books" Margin="0,10" Click="BtnBooks_Click"/>
+            <Button Content="Manage Members" Margin="0,10" Click="BtnMembers_Click"/>
+            <Button Content="Issue/Return Books" Margin="0,10" Click="BtnIssueReturn_Click"/>
+            <Button Content="Reports" Margin="0,10" Click="BtnReports_Click"/>
+            <Button Content="Logout" Margin="0,10" Click="BtnLogout_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

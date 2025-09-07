@@ -1,0 +1,22 @@
+﻿<Window x:Class="Library_System_Management.Views.AddEditBookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add/Edit Book" Height="300" Width="400">
+    <Grid Margin="10">
+        <StackPanel>
+            <Label Content="Title"/>
+            <TextBox Name="TxtTitle" Margin="0,5"/>
+
+            <Label Content="Author"/>
+            <TextBox Name="TxtAuthor" Margin="0,5"/>
+
+            <Label Content="ISBN"/>
+            <TextBox Name="TxtIsbn" Margin="0,5"/>
+
+            <Label Content="Quantity"/>
+            <TextBox Name="TxtQuantity" Margin="0,5"/>
+
+            <Button Content="Save" Margin="0,10" Click="BtnSave_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

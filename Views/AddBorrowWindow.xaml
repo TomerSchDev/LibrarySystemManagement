@@ -1,0 +1,22 @@
+﻿<Window x:Class="Library_System_Management.Views.AddBorrowWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        Title="Add Borrow" Height="300" Width="400"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Select Book" FontWeight="Bold"/>
+            <ComboBox Name="cmbBooks" DisplayMemberPath="Title" SelectedValuePath="BookID" Margin="0,5"/>
+            
+            <TextBlock Text="Borrow Date"/>
+            <DatePicker Name="dpBorrowDate" SelectedDate="{x:Static sys:DateTime.Now}" Margin="0,5"/>
+
+            <TextBlock Text="Expected Return Date"/>
+            <DatePicker Name="dpReturnDate" Margin="0,5"/>
+
+            <Button Content="Confirm" HorizontalAlignment="Right" Width="100" Margin="0,10,0,0" 
+                    Click="BtnConfirm_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
