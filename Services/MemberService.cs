@@ -60,5 +60,10 @@ namespace Library_System_Management.Services
                 MessageBox.Show("couldn't select all members from  DatabaseManager with expectation : "+e.Message);
             }
         }
+
+        public static Member? GetMember(int memberId)
+        {
+            return GetAllMembers().Find(member => member.MemberID == memberId);
+        }
     }
 }

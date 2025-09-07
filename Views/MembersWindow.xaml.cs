@@ -16,8 +16,8 @@ public partial class MembersWindow : Window
     private void LoadMembers()
     {
         _members = MemberService.GetAllMembers();
-        DgMembers.ItemsSource = new ObservableCollection<Member>(
-            );
+
+        DgMembers.ItemsSource = new ObservableCollection<Member>(_members);
         DataContext = this;
 
     }

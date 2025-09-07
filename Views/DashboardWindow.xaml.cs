@@ -47,7 +47,13 @@ namespace Library_System_Management.Views
         {
             var login = new LoginWindow();
             login.Show();
-            this.Close();
+        }
+
+        private void BtnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            var search=new  SearchWindow();
+            search.ShowDialog();
+            
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Library_System_Management.Views
                 TxtAuthor.Text != string.Empty ? TxtAuthor.Text : editingBook!.Author,
                 TxtIsbn.Text != string.Empty ? TxtIsbn.Text : editingBook!.ISBN,
                 TxtQuantity.Text != string.Empty ? int.Parse(TxtQuantity.Text) : editingBook!.Quantity);
-
+            
             editingBook = tmp;
             DialogResult = true;
             Close();

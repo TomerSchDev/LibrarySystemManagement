@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using Library_System_Management.Database;
 using Library_System_Management.Models;
 using Library_System_Management.Models.ViewModels;
@@ -109,15 +110,22 @@ namespace Library_System_Management.Services
         private static List<BorrowedBook> GetAllBorrowedBooks()
         {
             var list = new List<BorrowedBook>();
+            try
+            {
+                list = DatabaseManager.SelectAll<BorrowedBook>();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error selecting all BorrowedBook data from db with error:"+ e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
             return list;
         }
 
-        public static List<BorrowedBookView> GetBorrowHistory(int memberMemberId)
+        private static List<BorrowedBookView> GetBorrowedBooksHistoryByCondition(Func<BorrowedBookView,bool> condition)
         {
-            
             var allBorrowedBooks = GetAllBorrowedBooks();
             var memberBorrowBooks=new  List<BorrowedBookView>();
-            if (memberBorrowBooks == null) throw new ArgumentNullException(nameof(memberBorrowBooks));
             memberBorrowBooks.AddRange(allBorrowedBooks.Select(b => new BorrowedBookView
             {
                 BorrowID = b.BorrowId,
@@ -128,8 +136,17 @@ namespace Library_System_Management.Services
                 ReturnDate = b.ReturnDate,
                 Returned = b.Returned,
                 Book = BookService.GetBookById(b.BookId),
-            }).Where(b => b.MemberID == memberMemberId).ToList());
+            }).Where(condition).ToList());
             return memberBorrowBooks;
+        }
+
+        public static List<BorrowedBookView> GetBorrowHistoryByMemberId(int memberId)
+        {
+            return GetBorrowedBooksHistoryByCondition(b=>b.MemberID == memberId);
+        }
+        public static List<BorrowedBookView> GetBorrowHistoryByBookId(int bookId)
+        {
+            return GetBorrowedBooksHistoryByCondition(b=>b.BookID==bookId);
         }
     }
 }

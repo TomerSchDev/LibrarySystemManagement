@@ -9,7 +9,7 @@ namespace Library_System_Management.Database
 {
     public static class DatabaseManager
     {
-        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "LibraryManagementDB.sqlite");
+        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "LibraryDB.sqlite");
 
         static DatabaseManager()
         {

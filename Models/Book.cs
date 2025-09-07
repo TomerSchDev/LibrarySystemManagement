@@ -1,17 +1,13 @@
 ﻿namespace Library_System_Management.Models;
 
-public record Book
+public record Book()
 {
-    public Book(string title, string author, string isbn, int quantity)
+    public Book(string title, string author, string isbn,int quantity):this()
     {
         Title = title;
         Author = author;
         ISBN = isbn;
         Quantity = quantity;
-    }
-
-    public Book()
-    {
         
     }
 

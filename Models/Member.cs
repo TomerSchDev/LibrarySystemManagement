@@ -5,11 +5,10 @@ public class Member()
     public Member(string NameText, string EmailText, string PhoneText) : this()
     {
         MemberID = -1;
-        this.FullName = NameText;
-        this.Email = EmailText;
-        this.Phone = PhoneText;
+        FullName = NameText;
+        Email = EmailText;
+        Phone = PhoneText;
     }
-
     public int MemberID { get; set; }
     public string FullName { get; set; }
     public string Email { get; set; }

@@ -31,15 +31,15 @@ namespace Library_System_Management.Views
             ReturnBookCommand = new RelayCommand<BorrowedBookView>(ReturnBook);
             ExtendBorrowCommand = new RelayCommand<BorrowedBookView>(ExtendBorrow);
             AddBorrowCommand = new RelayCommand(AddBorrow);
-
+            LoadBorrowHistory();
             DataContext = this;
         }
 
-        private void loadBorrowHistory()
+        private void LoadBorrowHistory()
         {
             CurrentBorrows.Clear();
             BorrowHistory.Clear();
-            var memberBorrows = BorrowService.GetBorrowHistory(SelectedMember.MemberID);
+            var memberBorrows = BorrowService.GetBorrowHistoryByMemberId(SelectedMember.MemberID);
             CurrentBorrows = new ObservableCollection<BorrowedBookView>(
                 memberBorrows.Where(b => !b.Returned)
             );
@@ -72,11 +72,19 @@ namespace Library_System_Management.Views
             // Show a dialog where librarian selects a book to borrow
             var window = new AddBorrowWindow(SelectedMember);
             if (window.ShowDialog() != true) return;
-            
+
             var newBorrow = window.NewBorrow;
             if (newBorrow == null) return;
+            var borrowCurrent = CurrentBorrows.FirstOrDefault(b => b.BookID == newBorrow.BookID);
+            if (borrowCurrent != null)
+            {
+                MessageBox.Show("This book already borrowed by user, cant borrow it again", "Confirm", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             BorrowService.IssueBook(newBorrow.BookID, SelectedMember.MemberID, newBorrow.ExpectedReturnDate);
-            loadBorrowHistory();
+            LoadBorrowHistory();
+            MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
     }

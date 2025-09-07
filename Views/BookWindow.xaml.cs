@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Library_System_Management.Models;
 using Library_System_Management.Services;
 
@@ -21,7 +23,21 @@ namespace Library_System_Management.Views
             dgBooks.ItemsSource = books;
         }
 
-        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        private void OpenBookWindow(Book book)
+        {
+            var bookInfoWindow= new BookInfoWindow(book);
+            bookInfoWindow.ShowDialog();
+            LoadBooks();
+        }
+
+        private void dgBooks_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var grid=sender as DataGrid;
+            if (grid?.SelectedItem is not Book item) return;
+            OpenBookWindow(item);
+        }
+
+    private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddEditBookWindow(null);
             if (addWindow.ShowDialog() != true)
@@ -36,6 +52,7 @@ namespace Library_System_Management.Views
                 return;
             }
 
+            b.Available = b.Quantity;
             BookService.AddBook(b);
             LoadBooks();
         }
@@ -57,6 +74,8 @@ namespace Library_System_Management.Views
                     return;
                 }
 
+                var listBorrowed = BorrowService.GetBorrowHistoryByBookId(b.BookID);
+                b.Available = int.Max(b.Quantity-listBorrowed.Count,0);
                 BookService.UpdateBook(b);
             }
             else
@@ -76,6 +95,12 @@ namespace Library_System_Management.Views
             {
                 MessageBox.Show("Select a book to delete.");
             }
+        }
+
+        private void BtnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgBooks.SelectedItem is not Book selected) return;
+            OpenBookWindow(selected);
         }
     }
 }
