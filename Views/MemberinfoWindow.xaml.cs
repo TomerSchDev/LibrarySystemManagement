@@ -74,15 +74,8 @@ namespace Library_System_Management.Views
             if (window.ShowDialog() != true) return;
 
             var newBorrow = window.NewBorrow;
-            if (newBorrow == null) return;
-            var borrowCurrent = CurrentBorrows.FirstOrDefault(b => b.BookID == newBorrow.BookID);
-            if (borrowCurrent != null)
-            {
-                MessageBox.Show("This book already borrowed by user, cant borrow it again", "Confirm", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            BorrowService.IssueBook(newBorrow.BookID, SelectedMember.MemberID, newBorrow.ExpectedReturnDate);
+            if (newBorrow?.Book == null)return;
+            BorrowService.IssueBook(newBorrow.Book, SelectedMember, newBorrow.ExpectedReturnDate);
             LoadBorrowHistory();
             MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
 

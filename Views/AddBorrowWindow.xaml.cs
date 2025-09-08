@@ -30,10 +30,12 @@ namespace Library_System_Management.Views
                 MessageBox.Show("Please select a book.");
                 return;
             }
-            NewBorrow = new BorrowedBookView();
-            NewBorrow.BookID=selectedBook.BookID;
-            NewBorrow.MemberID=_member.MemberID;
-            NewBorrow.ReturnDate = dpReturnDate.SelectedDate;
+            NewBorrow = new BorrowedBookView
+            {
+                BookID = selectedBook.BookID,
+                MemberID = _member.MemberID,
+                ReturnDate = dpReturnDate.SelectedDate
+            };
             DialogResult = true;
             Close();
         }

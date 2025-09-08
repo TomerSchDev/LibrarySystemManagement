@@ -18,32 +18,28 @@ public partial class SearchWindow : Window
         // Add double-click events
         dgBooks.MouseDoubleClick += (s, e) =>
         {
-            if (dgBooks.SelectedItem is Book book)
-            {
-                var win = new BookInfoWindow(book);
-                win.ShowDialog();
-            }
+            if (dgBooks.SelectedItem is not Book book) return;
+            var win = new BookInfoWindow(book);
+            win.ShowDialog();
         };
 
         dgMembers.MouseDoubleClick += (s, e) =>
         {
-            if (dgMembers.SelectedItem is Member member)
-            {
-                var win = new MemberInfoWindow(member);
-                win.ShowDialog();
-            }
+            if (dgMembers.SelectedItem is not Member member) return;
+            var win = new MemberInfoWindow(member);
+            win.ShowDialog();
         };
     }
     private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
     {
-        var query = TxtSearch.Text.Trim().ToLower();
+        var query = TxtSearch.Text.Trim();
 
         // Books search → Title, Author, ISBN
         var books = BookService.GetAllBooks()
             .Where(b =>
-                (!string.IsNullOrEmpty(b.Title) && b.Title.ToLower().Contains(query)) ||
-                (!string.IsNullOrEmpty(b.Author) && b.Author.ToLower().Contains(query)) ||
-                (!string.IsNullOrEmpty(b.ISBN) && b.ISBN.ToLower().Contains(query))
+                (!string.IsNullOrEmpty(b.Title) && b.Title.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
+                (!string.IsNullOrEmpty(b.Author) && b.Author.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
+                (!string.IsNullOrEmpty(b.ISBN) && b.ISBN.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase))
             )
             .ToList();
         dgBooks.ItemsSource = books;
@@ -51,9 +47,9 @@ public partial class SearchWindow : Window
         // Members search → FullName, Email, Phone
         var members = MemberService.GetAllMembers()
             .Where(m =>
-                (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(query)) ||
-                (!string.IsNullOrEmpty(m.Email) && m.Email.ToLower().Contains(query)) ||
-                (!string.IsNullOrEmpty(m.Phone) && m.Phone.ToLower().Contains(query))
+                (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
+                (!string.IsNullOrEmpty(m.Email) && m.Email.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
+                (!string.IsNullOrEmpty(m.Phone) && m.Phone.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase))
             )
             .ToList();
         dgMembers.ItemsSource = members;

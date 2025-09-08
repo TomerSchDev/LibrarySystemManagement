@@ -24,5 +24,10 @@
                 return ReturnDate <= ExpectedReturnDate ? "On Time" : "Late";
             }
         }
+
+        public string toString()
+        {
+            return $"Borrow record ID: {BorrowID},  Book Id {BookID}, Book Title {Book?.Title}  Member Id {MemberID}, Member Name {Member?.FullName} Status {Status}";
+        }
     }
 }

@@ -74,5 +74,14 @@ public partial class IssueReturnWindow : Window
         }
     }
 
-    
+
+    private void BtnAdd_Click(object sender, RoutedEventArgs e)
+    {
+        var addNewIssue = new AddIssueBook();
+        if (addNewIssue.ShowDialog()!= true) return;
+        var bookIssue = addNewIssue.NewBorrow;
+        if (bookIssue is { Member: not null, Book: not null }) BorrowService.IssueBook(bookIssue.Book, bookIssue.Member, bookIssue.ReturnDate);
+        LoadTables();
+        MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 }

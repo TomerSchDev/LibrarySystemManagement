@@ -38,8 +38,8 @@
                 <DataGrid ItemsSource="{Binding CurrentBorrows}" AutoGenerateColumns="False"
                           CanUserAddRows="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Member ID" Binding="{Binding (models:Member.MemberID)}" Width="*"/>
-                        <DataGridTextColumn Header="Member Name" Binding="{Binding (models:Member.FullName)}" Width="*"/>
+                        <DataGridTextColumn Header="Member ID" Binding="{Binding MemberID}" Width="*"/>
+                        <DataGridTextColumn Header="Member Name" Binding="{Binding Member.FullName}" Width="*"/>
                         <DataGridTextColumn Header="Borrow Date" Binding="{Binding BorrowDate}" Width="150"/>
                         <DataGridTextColumn Header="Expected Return" Binding="{Binding ExpectedReturnDate}" Width="150"/>
                         <DataGridTemplateColumn Header="Actions" Width="150">
@@ -63,8 +63,8 @@
             <DataGrid ItemsSource="{Binding BorrowHistory}" AutoGenerateColumns="False"
                       CanUserAddRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Member ID" Binding="{Binding (models:Member.MemberID)}" Width="*"/>
-                    <DataGridTextColumn Header="Member Name" Binding="{Binding (models:Member.FullName)}" Width="*"/>
+                    <DataGridTextColumn Header="Member ID" Binding="{Binding MemberID}" Width="*"/>
+                    <DataGridTextColumn Header="Member Name" Binding="{Binding Member.FullName}" Width="*"/>
                     <DataGridTextColumn Header="Borrow Date" Binding="{Binding BorrowDate}" Width="150"/>
                     <DataGridTextColumn Header="Expected Return" Binding="{Binding ExpectedReturnDate}" Width="150"/>
                     <DataGridTextColumn Header="Returned On" Binding="{Binding ReturnDate}" Width="150"/>

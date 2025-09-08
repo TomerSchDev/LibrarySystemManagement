@@ -9,6 +9,7 @@
             <Button Content="Manage Members" Margin="0,10" Click="BtnMembers_Click"/>
             <Button Content="Issue/Return Books" Margin="0,10" Click="BtnIssueReturn_Click"/>
             <Button Content="Reports" Margin="0,10" Click="BtnReports_Click"/>
+            <Button Content="Users" Margin="0,10" Click="BtnUsers_Click"/>
             <Button Content="Logout" Margin="0,10" Click="BtnLogout_Click"/>
         </StackPanel>
     </Grid>

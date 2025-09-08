@@ -50,5 +50,11 @@ namespace Library_System_Management.Views
             search.ShowDialog();
             
         }
+
+        private void BtnUsers_Click(object sender, RoutedEventArgs e)
+        {
+            var users=new UsersWindow();
+            users.ShowDialog();
+        }
     }
 }

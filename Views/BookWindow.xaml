@@ -13,7 +13,7 @@
                   >
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding BookId}" Width="50"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding BookID}" Width="50"/>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="*"/>
                 <DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="*"/>

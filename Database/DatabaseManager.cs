@@ -32,7 +32,7 @@ namespace Library_System_Management.Database
             CreateTable<Book>();
             CreateTable<Member>();
             CreateTable<BorrowedBook>();
-
+            CreateTable<Report>();
             SeedDefaultAdmin();
         }
 
@@ -160,26 +160,25 @@ namespace Library_System_Management.Database
                 var obj = new T();
                 foreach (var prop in props)
                 {
-                    if (!reader.IsDBNull(reader.GetOrdinal(prop.Name)))
-                    {
-                        var val = reader[prop.Name];
-                        var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                    if (!prop.CanWrite) continue;
+                    if (reader.IsDBNull(reader.GetOrdinal(prop.Name))) continue;
+                    var val = reader[prop.Name];
+                    var targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
-                        if (targetType == typeof(int))
-                            prop.SetValue(obj, Convert.ToInt32(val));
-                        else if (targetType == typeof(long))
-                            prop.SetValue(obj, Convert.ToInt64(val));
-                        else if (targetType == typeof(bool))
-                            prop.SetValue(obj, Convert.ToInt32(val) == 1);
-                        else if (targetType == typeof(DateTime))
-                            prop.SetValue(obj, DateTime.Parse(val.ToString() ?? string.Empty));
-                        else if (targetType == typeof(string))
-                            prop.SetValue(obj, val.ToString());
-                        else if (targetType == typeof(UserRole))
-                            prop.SetValue(obj, Enum.Parse(targetType, val.ToString() ?? string.Empty));
-                        else
-                            prop.SetValue(obj, Convert.ChangeType(val, targetType));
-                    }
+                    if (targetType == typeof(int))
+                        prop.SetValue(obj, Convert.ToInt32(val));
+                    else if (targetType == typeof(long))
+                        prop.SetValue(obj, Convert.ToInt64(val));
+                    else if (targetType == typeof(bool))
+                        prop.SetValue(obj, Convert.ToInt32(val) == 1);
+                    else if (targetType == typeof(DateTime))
+                        prop.SetValue(obj, DateTime.Parse(val.ToString() ?? string.Empty));
+                    else if (targetType == typeof(string))
+                        prop.SetValue(obj, val.ToString());
+                    else if (targetType.IsEnum)
+                        prop.SetValue(obj, Enum.Parse(targetType, val.ToString() ?? string.Empty));
+                    else
+                        prop.SetValue(obj, Convert.ChangeType(val, targetType));
                 }
                 result.Add(obj);
             }

@@ -4,7 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Library_System_Management.Helpers;
 using Library_System_Management.Models;
+using Library_System_Management.Models.ViewModels;
 using Library_System_Management.Services;
+using Library_System_Management.Views;
 
 namespace Library_System_Management.Views
 {

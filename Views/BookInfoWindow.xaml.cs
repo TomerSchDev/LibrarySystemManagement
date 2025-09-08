@@ -43,6 +43,7 @@ public partial class BookInfoWindow : Window
         var borrowList = BorrowService.GetBorrowHistoryByBookId(SelectedBook.BookID);
         foreach (var b in borrowList)
         {
+            Console.WriteLine(b.toString());
             if (b.Returned)
             {
                 BorrowHistory.Add(b);

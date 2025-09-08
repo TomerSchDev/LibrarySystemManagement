@@ -8,7 +8,7 @@ namespace Library_System_Management.Services
 {
     public static class BorrowService
     {
-        public static void IssueBook(int bookId, int memberId, DateTime? returnDate)
+        public static void IssueBook(Book book, Member member, DateTime? returnDate)
         {
             if (!SessionHelperService.IsEnoughPermission(UserRole.Librarian))
             {
@@ -16,10 +16,17 @@ namespace Library_System_Management.Services
 
             }
 
+            var currentBorrows = GetBorrowHistoryByMemberId(member.MemberID);
+            var borrowCurrent = currentBorrows.FirstOrDefault(b => b.BookID == book.BookID);
+            if (borrowCurrent != null)
+            {
+                MessageBox.Show("This book already borrowed by user, cant borrow it again", "Confirm", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             var borrowedBook = new BorrowedBook
             {
-                BookId = bookId,
-                MemberId = memberId,
+                BookId = book.BookID,
+                MemberId = member.MemberID,
                 IssueDate = DateTime.Now,
                 ReturnDate = returnDate ?? DateTime.Now.AddDays(14),
                 Returned = false
