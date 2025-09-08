@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Library_System_Management.Models;
 using Library_System_Management.Services;
 
 namespace Library_System_Management.Views;
@@ -22,7 +23,9 @@ public partial class UsersWindow : Window
 
     private void dgUsers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        
+        if (dgUsers.SelectedItem is not User user) return;
+        var userInfo = new UserInfoWindow(user);
+        userInfo.ShowDialog();
     }
 
     private void BtnAdd_Click(object sender, RoutedEventArgs e)

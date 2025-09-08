@@ -10,7 +10,7 @@ public partial class ReportsWindow : Window
     public ReportsWindow()
     {
         InitializeComponent();
-        DgReports.ItemsSource=new ObservableCollection<Report>();
+        DgReports.ItemsSource=new ObservableCollection<Report>(ReportingService.GetReportsWithPermission());
         LoadReports();
         DataContext = this;
     }
@@ -18,7 +18,7 @@ public partial class ReportsWindow : Window
     private void LoadReports()
     {
         DgReports.ItemsSource = null;
-        DgReports.ItemsSource=new ObservableCollection<Report>(ReportingService.GetReports());
+        DgReports.ItemsSource=new ObservableCollection<Report>(ReportingService.GetReportsWithPermission());
         DataContext = this;
     }
 }

@@ -14,11 +14,27 @@ public static class ReportingService
             MessageBox.Show("No Active User", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
-        DatabaseManager.Insert(new Report(severityLevel, user.Username, user.Role.ToString(), DateTime.Now, message));
+        DatabaseManager.Insert(new Report(severityLevel, user.Username,user.UserID, user.Role, DateTime.Now, message));
     }
 
-    public static List<Report> GetReports()
+    private static List<Report> GetReports()
     {
         return DatabaseManager.SelectAll<Report>();
+    }
+
+    public static List<Report> GetReportsByUser(User user)
+    {
+        return GetReports().Where(r => r.UserId == user.UserID).ToList();
+    }
+    public static List<Report> GetReportsOfCurrentUser()
+    {
+        var user = SessionHelperService.GetCurrentUser();
+        return user == null ? [] : GetReports().Where(r => r.UserId == user.UserID).ToList();
+    }
+    public static List<Report> GetReportsWithPermission()
+    {
+        var user = SessionHelperService.GetCurrentUser();
+        
+        return user == null ? [] : GetReports().Where(r =>SessionHelperService.IsEnoughPermission(r.Role)).ToList();
     }
 }

@@ -44,8 +44,20 @@ namespace Library_System_Management.Services
             DatabaseManager.Insert(newUser);
             MessageBox.Show("User added successfully", "action complete",
                 MessageBoxButton.OK, MessageBoxImage.Information);
-            ReportingService.ReportEvent(SeverityLevel.INFO,$"User {newUser.Username} added successfully with role {newUser.UserRuleToString}");
+            ReportingService.ReportEvent(SeverityLevel.INFO,$"User {newUser.Username} added successfully with role {newUser.UserRoleToString}");
             return true;
+        }
+
+        public static User? GetUserById(int id)
+        {
+            var users = DatabaseManager.SelectAll<User>();
+            var user = users.FirstOrDefault(u => u.UserID == id);
+            if (user == null) return null;
+            if (SessionHelperService.IsEnoughPermission(user.Role)) return user;
+            MessageBox.Show("Cant get User with more Permission then current user , reporting action","Warning",MessageBoxButton.OK,MessageBoxImage.Warning);
+            ReportingService.ReportEvent(SeverityLevel.MEDIUM,"Trying to get User with more Permission then current user ");
+            return null;
+
         }
     }
 }

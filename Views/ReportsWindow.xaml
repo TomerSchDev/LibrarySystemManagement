@@ -11,19 +11,14 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--=public SeverityLevel SeverityLevel { get; set; } = SeverityLevel;
-                    public User User { get; set; } = User;
-                    public String Role { get; set; } = Role;
-                    public DateTime ActionDate { get; set; } = ActionDate;
-                    public int ReportID { get; set; }
-                    public string ReportMessage { get; set; } = ReportMessage;-->
         <DataGrid Name="DgReports" AutoGenerateColumns="False" Grid.Row="0" Margin="0,0,0,10" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Report ID" Binding="{Binding ReportID}" />
                 <DataGridTextColumn Header="SeverityLevel" Binding="{Binding SeverityLevelString}" />
                 <DataGridTextColumn Header="Report Date" Binding="{Binding ActionDate}" />
+                <DataGridTextColumn Header="User ID" Binding="{Binding Userid}" />
                 <DataGridTextColumn Header="Username" Binding="{Binding User}" />
-                <DataGridTextColumn Header="User Role" Binding="{Binding Role}" />
+                <DataGridTextColumn Header="User Role" Binding="{Binding RoleString}" />
                 <DataGridTextColumn Header="Report Message" Binding="{Binding ReportMessage}" />
             </DataGrid.Columns>
         </DataGrid>

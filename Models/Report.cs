@@ -10,7 +10,7 @@ public enum SeverityLevel
 }
 public record Report()
 {
-    public Report(SeverityLevel SeverityLevel, string User, string Role, DateTime ActionDate, string ReportMessage) : this()
+    public Report(SeverityLevel SeverityLevel, string User,int userId, UserRole Role, DateTime ActionDate, string ReportMessage) : this()
     {
         this.SeverityLevel=SeverityLevel;
         this.User=User;
@@ -21,10 +21,12 @@ public record Report()
 
     public SeverityLevel SeverityLevel { get; set; }
     public string User { get; set; }
-    public string Role { get; set; }
+    public int UserId { get; set; }
+    public UserRole Role { get; set; }
     public DateTime ActionDate { get; set; }
     public int ReportID { get; set; }
     public string ReportMessage { get; set; }
+    public String RoleString => Role.ToString();
     
     public string SeverityLevelString => SeverityLevel.ToString();
 }

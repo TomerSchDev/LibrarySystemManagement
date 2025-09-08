@@ -40,7 +40,7 @@ namespace Library_System_Management.Models
         public string Password { get; set; }
         public UserRole Role { get; set; } // Admin or Member
 
-        public string UserRuleToString => Role.ToString();
+        public string UserRoleToString => Role.ToString();
 
 }
 }

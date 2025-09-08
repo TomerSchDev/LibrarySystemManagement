@@ -12,7 +12,7 @@
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding UserID}" Width="50"/>
-                <DataGridTextColumn Header="Role" Binding="{Binding UserRuleToString}" Width="*"/>
+                <DataGridTextColumn Header="Role" Binding="{Binding UserRoleToString}" Width="*"/>
                 <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="2*"/>
                 
             </DataGrid.Columns>
