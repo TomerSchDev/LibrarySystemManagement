@@ -4,9 +4,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Library_System_Management.Views"
+        xmlns:models="clr-namespace:Library_System_Management.Models"
         mc:Ignorable="d"
         Title="IssueReturnWindow" Height="450" Width="800">
     <Grid>
-        
-    </Grid>
+        <TabControl>
+            <TabItem Header="Current Borrow">
+                <Grid Margin="10">
+                    <GroupBox Header="Current Borrowed Copies" Padding="10" Margin="0,0,0,10">
+                        <DockPanel>
+                            <!-- Borrowed Books Table -->
+                            <DataGrid ItemsSource="{Binding CurrentBorrows}" AutoGenerateColumns="False" MouseDoubleClick="tbl_MouseDoubleClick">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Book ID" Binding="{Binding BookID}" Width="1*" />
+                                    <DataGridTextColumn Header="Book title" Binding="{Binding Book.Title}" Width="3*" />
+                                    <DataGridTextColumn Header="Book author" Binding="{Binding Book.Author}" Width="2*" />
+                                    <DataGridTextColumn Header="Member ID" Binding="{Binding MemberID}" Width="1*" />
+                                    <DataGridTextColumn Header="Member Name" Binding="{Binding Member.FullName}" Width="2*" />
+                                    <DataGridTextColumn Header="Borrow Date" Binding="{Binding BorrowDate}" Width="1*"/>
+                                    <DataGridTextColumn Header="Expected Return" Binding="{Binding ExpectedReturnDate}" Width="1*"/>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </GroupBox>
+                </Grid>
+                </TabItem>
+            <TabItem Header="Borrow Records">
+                <Grid Margin="10">
+                    <GroupBox  Header="Borrow History" Padding="10" >
+                        <DataGrid ItemsSource="{Binding BorrowHistory}" AutoGenerateColumns="False" MouseDoubleClick="tbl_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Book ID" Binding="{Binding BookID}" Width="1*"/>
+                                <DataGridTextColumn Header="Book title" Binding="{Binding Book.Title}" Width="3*"/>
+                                <DataGridTextColumn Header="Book author" Binding="{Binding Book.Author}" Width="2*"/>
+                                <DataGridTextColumn Header="Member Name" Binding="{Binding Member.FullName}" Width="2*"/>
+                                <DataGridTextColumn Header="Member ID" Binding="{Binding MemberID}" Width="1*"/>
+                                <DataGridTextColumn Header="Borrow Date" Binding="{Binding BorrowDate}" Width="1*"/>
+                                <DataGridTextColumn Header="Expected Return" Binding="{Binding ExpectedReturnDate}" Width="1*"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            </TabControl>
+        </Grid>
 </Window>

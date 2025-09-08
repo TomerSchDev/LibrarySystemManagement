@@ -147,6 +147,7 @@ namespace Library_System_Management.Services
                 ReturnDate = b.ReturnDate,
                 Returned = b.Returned,
                 Book = BookService.GetBookById(b.BookId),
+                Member = MemberService.GetMember(b.MemberId)
             }).Where(condition).ToList());
             return memberBorrowBooks;
         }
@@ -158,6 +159,11 @@ namespace Library_System_Management.Services
         public static List<BorrowedBookView> GetBorrowHistoryByBookId(int bookId)
         {
             return GetBorrowedBooksHistoryByCondition(b=>b.BookID==bookId);
+        }
+
+        public static List<BorrowedBookView> GetBorrowHistoryEveryThing()
+        {
+            return GetBorrowedBooksHistoryByCondition(b => true);
         }
     }
 }

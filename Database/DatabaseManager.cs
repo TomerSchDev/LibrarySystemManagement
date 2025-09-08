@@ -43,7 +43,7 @@ namespace Library_System_Management.Database
             cmd.CommandText = "SELECT COUNT(*) FROM User;";
             var count = (long)(cmd.ExecuteScalar() ?? 0);
             if (count != 0) return;
-            cmd.CommandText = "INSERT INTO User (Username, Password, UserType) VALUES (@u, @p, @t);";
+            cmd.CommandText = "INSERT INTO User (Username, Password, Role) VALUES (@u, @p, @t);";
             cmd.Parameters.AddWithValue("@u", "admin");
             cmd.Parameters.AddWithValue("@p", "admin123");
             cmd.Parameters.AddWithValue("@t", UserRole.Admin);
@@ -73,6 +73,8 @@ namespace Library_System_Management.Database
                         colType = "INTEGER";
                     else if (pt == typeof(DateTime))
                         colType = "TEXT";
+                    else if (pt == typeof(Enum))
+                        colType = "INTEGER";
                     else
                         colType = "TEXT";
 
@@ -173,6 +175,8 @@ namespace Library_System_Management.Database
                             prop.SetValue(obj, DateTime.Parse(val.ToString() ?? string.Empty));
                         else if (targetType == typeof(string))
                             prop.SetValue(obj, val.ToString());
+                        else if (targetType == typeof(UserRole))
+                            prop.SetValue(obj, Enum.Parse(targetType, val.ToString() ?? string.Empty));
                         else
                             prop.SetValue(obj, Convert.ChangeType(val, targetType));
                     }
