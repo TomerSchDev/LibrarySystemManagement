@@ -22,9 +22,9 @@ namespace Library_System_Management.Views
             }
 
 
-            MessageBox.Show("Login successful!");
             if (user.ValidatePassword(txtPassword.Password))
             {
+                MessageBox.Show("Login successful!");
                 var dashboard = new DashboardWindow(user);
                 dashboard.Show();
                 Close();

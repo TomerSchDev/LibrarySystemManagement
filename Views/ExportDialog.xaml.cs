@@ -36,6 +36,12 @@ public partial class ExportDialog : Window
             return;
         }
         if (SelectedExportService == null) return;
-        DialogResult = ExporterService.Export(_data, FileName, SelectedExportService);
+        if (!ExporterService.Export(_data, FileName, SelectedExportService))
+        {
+            MessageBox.Show("Failed Exporting data.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        DialogResult = true;
+        Close();
     }
 }
