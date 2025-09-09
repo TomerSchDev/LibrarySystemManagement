@@ -1,47 +1,51 @@
 ﻿using Library_System_Management.Models;
+using Library_System_Management.Services;
 
+namespace Library_System_Management.Models;
 
-
-namespace Library_System_Management.Models
+public enum UserRole
 {
-    public enum UserRole
+    Member = 0,
+    Librarian = 1,
+    Admin = 2,
+}
+
+public class User : IExportable
+{
+    public User() {}
+
+    // On registration or password reset, use this constructor
+    public User(string username, string password, UserRole role = UserRole.Member)
     {
-        Member = 0,
-        Librarian = 1,
-        Admin = 2,
-    
+        Username = username;
+        Role = role;
+        SetPassword(password);
     }
 
-    public class User() : IExportable
+    public int UserID { get; set; }
+    public string Username { get; set; }
+    public UserRole Role { get; set; }
+    public string UserRoleToString => Role.ToString();
+    public string ExportClassName => "User";
+
+    // --- Security fields ---
+    public string PasswordHash { get; set; }        // For authentication only
+    public string PasswordSalt { get; set; }        // Unique salt
+    public string PasswordEncrypted { get; set; }   // For admin recovery/display
+
+    // Set or reset password (hash+salt/encrypt)
+    public void SetPassword(string password)
     {
-        public User(string username, string password) : this()
-        {
-            Username = username;
-            Password = password;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null) return false;
-            if (obj.GetType() != typeof(User)) return false;
-            var user = (User)obj;
-            return Username == user.Username && Password == user.Password;
-        }
-
-
-        public bool IsUser(User user)
-        {
-            return this.Equals(user);
-        }
-
-        
-        public int UserID { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public UserRole Role { get; set; } // Admin or Member
-
-        public string UserRoleToString => Role.ToString();
-
-        public string ExportClassName => "User";
+        var (hash, salt) = EncryptionService.CreateHash(password);
+        PasswordHash = hash;
+        PasswordSalt = salt;
+        PasswordEncrypted = EncryptionService.Encrypt(password, EncryptionService.MasterKey);
     }
+
+    // Check a plaintext password for login
+    public bool ValidatePassword(string password) =>
+        EncryptionService.VerifyHash(password, PasswordHash, PasswordSalt);
+
+    public string GetPasswordForDisplay(string adminKey)
+        => EncryptionService.Decrypt(PasswordEncrypted, adminKey);
 }

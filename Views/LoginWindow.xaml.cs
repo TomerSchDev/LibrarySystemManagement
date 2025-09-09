@@ -13,15 +13,21 @@ namespace Library_System_Management.Views
 
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            var user = AuthService.Login(txtUsername.Text, txtPassword.Password);
-            if(user != null)
+            var user = AuthService.GetUserByUsername(txtUsername.Text);
+            if (user == null)
             {
-                MessageBox.Show("Login successful!");
-                
+                MessageBox.Show("Couldn't find user with this username : " + txtUsername.Text, "Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+
+            MessageBox.Show("Login successful!");
+            if (user.ValidatePassword(txtPassword.Password))
+            {
                 var dashboard = new DashboardWindow(user);
                 dashboard.Show();
-
-                this.Close();
+                Close();
             }
             else
             {

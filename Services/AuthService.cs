@@ -7,12 +7,10 @@ namespace Library_System_Management.Services
 {
     public static class AuthService
     {
-        public static User? Login(string username, string password)
+        public static User? GetUserByUsername(string username)
         {
-            var loginUser = new User(username, password);
-            if (loginUser == null) throw new ArgumentNullException(nameof(loginUser));
             var users = DatabaseManager.SelectAll<User>();
-            return users.FirstOrDefault(user => user.IsUser(loginUser));
+            return users.FirstOrDefault(u => u.Username == username);
         }
 
         public static List<User> GetUsers()

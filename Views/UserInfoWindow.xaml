@@ -32,7 +32,7 @@
                           IsChecked="{Binding ShowPassword, Mode=TwoWay}"/>
             </StackPanel>
         </GroupBox>
-        <Button Grid.Row="1" Content="Export User Info" Width="*" Height="20" Margin="5" Click="BtnExportUser_Click"/>
+        <Button Grid.Row="1" Content="Export User Info" Width="Auto" Height="20" Margin="5" Click="BtnExportUser_Click"/>
         <GroupBox Grid.Row="2" Header="Users Records" Margin="0,100,0,0">
             <DataGrid ItemsSource="{Binding RecordsHistory}" AutoGenerateColumns="False"
                       CanUserAddRows="False" IsReadOnly="True">
@@ -44,7 +44,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
-        <Button Grid.Row="3" Content="Export Reports" Width="*" Height="20" Margin="5" Click="BtnExportReports_Click"/>
+        <Button Grid.Row="3" Content="Export Reports" Width="Auto" Height="20" Margin="5" Click="BtnExportReports_Click"/>
 
     </Grid>
 </Window>

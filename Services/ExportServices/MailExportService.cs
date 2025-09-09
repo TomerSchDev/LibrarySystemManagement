@@ -1,10 +1,9 @@
 ﻿using System.IO;
-using System.Net.Mail;
-using System.Text.Json;
+
 using System.Windows;
 using Library_System_Management.Helpers;
 using Library_System_Management.Models;
-using Library_System_Management.Views.PopUpDIalogs;
+using Library_System_Management.Views.PopUpDialogs;
 using MimeKit;
 
 namespace Library_System_Management.Services.ExportServices;
@@ -18,9 +17,10 @@ public class SmtpConfig
     public int Port { get; set; }
     public bool Filled { get; set; }
 }
-public class MailExportService : IDataExportService
+public class MailExportService:IDataExportService
 {
     private const string SmtpJsonKey = "Smtp";
+    private static readonly CsvExportService csvExportService = new  CsvExportService();
 
     public string Name => "Mail";
 
@@ -42,66 +42,76 @@ public class MailExportService : IDataExportService
         var smtpConfig = new SmtpConfig();
         try
         {
-            var smtpElementNullable = ConfigHelper.LoadConfigProperty(SmtpJsonKey);
-            if (smtpElementNullable == null || smtpElementNullable.Value.ValueKind == JsonValueKind.Undefined)
-                throw new Exception("Missing SMTP config section!");
-
-            var smtp = smtpElementNullable.Value;
+            
             smtpConfig=new SmtpConfig
             {
-                Username = smtp.GetProperty("Username").GetString(),
-                Password = smtp.GetProperty("Password").GetString(),
-                Host = smtp.GetProperty("Host").GetString(),
-                Port = smtp.GetProperty("Port").GetInt32(),
+                Username =ConfigHelper.GetString(SmtpJsonKey+ ":Username"),
+                Password = ConfigHelper.GetString(SmtpJsonKey+ ":Password"),
+                Host = ConfigHelper.GetString(SmtpJsonKey+ ":Host"),
+                Port = Convert.ToInt32(ConfigHelper.GetString(SmtpJsonKey+ ":Port")),
                 Filled = true
             };
         }
         catch (Exception e)
         {
-            MessageBox.Show("Error parssing SMTP config, error : "+e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Error parsing SMTP config, error : "+e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            ReportingService.ReportEvent(SeverityLevel.MEDIUM,"Error parsing SMTP config file");
         }
 
         return smtpConfig;
     }
-    public void Export(IEnumerable<IExportable> data, string filePath)
+
+    public bool Export(IEnumerable<IExportable> data, string filePath)
     {
         var smtpConfig = ParseConfig();
-        if (!smtpConfig.Filled) return;
+        if (!smtpConfig.Filled) return false;
         var emailDialog = new EmailPromptWindow();
-        if (emailDialog.ShowDialog() != true) return;
+        if (emailDialog.ShowDialog() != true) return false;
         var recipientEmail = emailDialog.EnteredEmail;
-        new CsvExportService().Export(data, filePath);
-        var newFilePath = filePath + ".csv";
+
         var message = new MimeMessage();
-        var addressFrom = ParseMailboxAddress("");
-        if (addressFrom == null) return;
-        
+        var addressFrom = ParseMailboxAddress(smtpConfig.Username ?? string.Empty);
+        if (addressFrom == null) return false;
+
         message.From.Add(addressFrom);
         var addressTo = ParseMailboxAddress(recipientEmail);
-        if (addressTo == null) return;
+        if (addressTo == null) return false;
 
         message.To.Add(addressTo);
         message.Subject = "Exported Data from Library System";
         message.Body = new TextPart("plain") { Text = "See attachment" };
-
-        var attachment = new MimePart("application", "octet-stream")
-        {
-            Content = new MimeContent(File.OpenRead(newFilePath)),
-            ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-            ContentTransferEncoding = ContentEncoding.Base64,
-            FileName = Path.GetFileName(filePath)
-        };
-
         var multipart = new Multipart("mixed");
         multipart.Add(message.Body);
+        csvExportService.Export(data, filePath);
+        var newFilePath = filePath + ".csv";
+        var fileBytes = File.ReadAllBytes(newFilePath);
+        var attachment = new MimePart("application", "octet-stream")
+        {
+            Content = new MimeContent(new MemoryStream(fileBytes)),
+            ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+            ContentTransferEncoding = ContentEncoding.Base64,
+            FileName = Path.GetFileName(newFilePath)
+        };
+        File.Delete(newFilePath);
         multipart.Add(attachment);
         message.Body = multipart;
         using var client = new SmtpClient();
-        client.Connect(smtpConfig.Host, smtpConfig.Port, MailKit.Security.SecureSocketOptions.StartTls);
+        try
+        {
+            client.Connect(smtpConfig.Host, smtpConfig.Port, MailKit.Security.SecureSocketOptions.StartTls);
 
-        // Use your Gmail address and app password:
-        client.Authenticate(smtpConfig.Username, smtpConfig.Password);
-        client.Send(message);
-        client.Disconnect(true);
+            // Use your Gmail address and app password:
+            client.Authenticate(smtpConfig.Username, smtpConfig.Password);
+            client.Send(message);
+            client.Disconnect(true);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show("Error sending email, error : " + e.Message, "Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            ReportingService.ReportEvent(SeverityLevel.HIGH, "Error exporting data by mail");
+            return false;
+        }
+        return true;
     }
 }

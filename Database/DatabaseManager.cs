@@ -39,16 +39,10 @@ namespace Library_System_Management.Database
 
         private static void SeedDefaultAdmin()
         {
-            using var conn = GetConnection();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT COUNT(*) FROM User;";
-            var count = (long)(cmd.ExecuteScalar() ?? 0);
-            if (count != 0) return;
-            cmd.CommandText = "INSERT INTO User (Username, Password, Role) VALUES (@u, @p, @t);";
-            cmd.Parameters.AddWithValue("@u", "admin");
-            cmd.Parameters.AddWithValue("@p", "admin123");
-            cmd.Parameters.AddWithValue("@t", UserRole.Admin);
-            cmd.ExecuteNonQuery();
+            var users = SelectAll<User>();
+            if (users.Count != 0) return;
+            var defUser = new User("Admin", "admin123", UserRole.Admin);
+            Insert(defUser);
         }
 
         // -------------------- Generic CRUD --------------------
@@ -74,12 +68,12 @@ namespace Library_System_Management.Database
                         colType = "INTEGER";
                     else if (pt == typeof(DateTime))
                         colType = "TEXT";
-                    else if (pt == typeof(Enum))
+                    else if (pt.IsEnum)
                         colType = "INTEGER";
                     else
                         colType = "TEXT";
 
-                    string extra = p.Name == $"{tableName}ID" ? "PRIMARY KEY AUTOINCREMENT" : "";
+                    var extra = p.Name == $"{tableName}ID" ? "PRIMARY KEY AUTOINCREMENT" : "";
                     return $"{p.Name} {colType} {extra}".Trim();
                 });
 

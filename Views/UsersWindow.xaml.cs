@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Library_System_Management.Models;
 using Library_System_Management.Services;
+using Library_System_Management.Views.PopUpDialogs;
 
 namespace Library_System_Management.Views;
 
@@ -32,7 +33,7 @@ public partial class UsersWindow : Window
     {
         var addUser = new AddNewUser();
         if  (addUser.ShowDialog() != true) return;
-        var user = addUser.user;
+        var user = addUser.User;
         if (user == null) return;
         if (!AuthService.CreateNewUser(user)) return;
         LoadTables();

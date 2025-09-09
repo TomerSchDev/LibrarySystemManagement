@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Library_System_Management.Models;
 
-namespace Library_System_Management.Views;
+namespace Library_System_Management.Views.PopUpDialogs;
 
 public partial class AddEditMemberWindow : Window
 {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="Library_System_Management.Views.AddEditBookWindow"
+﻿<Window x:Class="Library_System_Management.Views.PopUpDialogs.AddEditBookWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add/Edit Book" Height="300" Width="400">

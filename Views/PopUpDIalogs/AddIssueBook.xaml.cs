@@ -3,7 +3,7 @@ using Library_System_Management.Models;
 using Library_System_Management.Models.ViewModels;
 using Library_System_Management.Services;
 
-namespace Library_System_Management.Views;
+namespace Library_System_Management.Views.PopUpDialogs;
 
 public partial class AddIssueBook : Window
 {

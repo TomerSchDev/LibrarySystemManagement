@@ -44,7 +44,7 @@ public partial class UserInfoWindow : Window, INotifyPropertyChanged
         RecordsHistory = new ObservableCollection<Report>(ReportingService.GetReportsByUser(SelectedUser));
     }
 
-    public string DisplayPassword => ShowPassword ? SelectedUser.Password : new string('●', SelectedUser.Password?.Length ?? 8);
+    public string DisplayPassword => ShowPassword ? SelectedUser.GetPasswordForDisplay(EncryptionService.MasterKey) : new string('●', SelectedUser.GetPasswordForDisplay(EncryptionService.MasterKey)?.Length ?? 8);
 
   
 

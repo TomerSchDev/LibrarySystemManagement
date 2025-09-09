@@ -1,12 +1,7 @@
-﻿using System;
-using System.Net.Mime;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Windows;
 using Library_System_Management.Models;
-using Library_System_Management.Services;
 
-namespace Library_System_Management.Views
+namespace Library_System_Management.Views.PopUpDialogs
 {
     public partial class AddEditBookWindow : Window
     {

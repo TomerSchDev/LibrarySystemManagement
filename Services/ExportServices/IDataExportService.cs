@@ -8,6 +8,5 @@ public interface IDataExportService
     string Name { get; }
     bool Export(IEnumerable<IExportable> data, string filePath);
 
-    static PropertyInfo[] GetObjectPropitiates(IEnumerable<IExportable> data) =>
-        data.ToList().Cast<object>().FirstOrDefault()!.GetType().GetProperties();
+    static PropertyInfo[] GetObjectPropitiates(IEnumerable<IExportable> data) => data.ToList().Cast<object>().FirstOrDefault()!.GetType().GetProperties();
 }

@@ -1,15 +1,15 @@
 ﻿using System.Windows;
 using Library_System_Management.Models;
 
-namespace Library_System_Management.Views;
+namespace Library_System_Management.Views.PopUpDialogs;
 
 public partial class AddNewUser : Window
 {
-    public User? user;
+    public User? User;
     public AddNewUser()
     {
         InitializeComponent();
-        user = new User();
+        User = null;
         cmbRoles.ItemsSource =Enum.GetValues<UserRole>();
         DataContext = this;
     }
@@ -30,10 +30,7 @@ public partial class AddNewUser : Window
             return;
         }
 
-        user ??= new User();
-        user.Username = username;
-        user.Password=password;
-        user.Role = role;
+        User = new User(username, password, role);
         DialogResult = true;
         Close();
     }
