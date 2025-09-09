@@ -21,7 +21,7 @@ public static class FileRetriever
         }
 #else
             // In prod, always use the EXE directory
-            _baseDirectory = exeDir;
+            ProjectRoot = exeDir;
 #endif
     }
     public static string RetrieveFIlePath(string filename)
