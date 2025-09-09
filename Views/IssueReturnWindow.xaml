@@ -11,7 +11,13 @@
         <TabControl>
             <TabItem Header="Current Borrow">
                 <Grid Margin="10">
-                    <GroupBox Header="Current Borrowed Copies" Padding="10" Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Button  Content="Export" Width="100" Margin="5" Grid.Row="0" Click="BtnExportCurrent_Click"/>
+                    <GroupBox Grid.Row="1" Header="Current Borrowed Copies" Padding="10" Margin="0,0,0,10">
                         <DockPanel>
                             <!-- Borrowed Books Table -->
                             <DataGrid ItemsSource="{Binding CurrentBorrows}" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="tbl_MouseDoubleClick">
@@ -32,11 +38,16 @@
                         </DockPanel>
                     </GroupBox>
                 </Grid>
-                
+
                 </TabItem>
             <TabItem Header="Borrow Records">
                 <Grid Margin="10">
-                    <GroupBox  Header="Borrow History" Padding="10" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Button  Content="Export" Width="100" Margin="5" Grid.Row="0" Click="BtnExportHistory_Click"/>
+                    <GroupBox Grid.Row="1" Header="Borrow History" Padding="10" >
                         <DataGrid ItemsSource="{Binding BorrowHistory}" IsReadOnly="True" AutoGenerateColumns="False" MouseDoubleClick="tbl_MouseDoubleClick">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Book ID" Binding="{Binding BookID}" Width="1*"/>

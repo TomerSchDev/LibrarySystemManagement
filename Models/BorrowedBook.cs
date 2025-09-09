@@ -1,6 +1,6 @@
 ﻿namespace Library_System_Management.Models;
 
-public class BorrowedBook
+public class BorrowedBook : IExportable
 {
     public int BorrowId { get; set; }
     public int BookId { get; set; }
@@ -9,4 +9,5 @@ public class BorrowedBook
     public DateTime? ReturnDate { get; set; }
     public DateTime? ReturnedDate { get; set; }
     public bool Returned { get; set; }
+    public string ExportClassName =>"BorrowedBook";
 }

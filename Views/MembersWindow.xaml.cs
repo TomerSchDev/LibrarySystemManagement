@@ -92,4 +92,9 @@ public partial class MembersWindow : Window
             MessageBox.Show("Select a book to delete.");
         }
     }
+
+    private void BtnExport_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([..MemberService.GetAllMembers()]);
+    }
 }

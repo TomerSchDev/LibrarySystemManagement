@@ -45,26 +45,27 @@ namespace Library_System_Management.Views
             );
             BorrowHistory = new ObservableCollection<BorrowedBookView>(
                 memberBorrows.Where(b => b.Returned)
-            );;
-            
+            );
+            ;
+
         }
 
-    
 
-    private void ReturnBook(BorrowedBookView borrow)
-    {
-        if (MessageBox.Show("Return this book?", "Confirm", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
-        BorrowService.ReturnBook(borrow.BorrowID);
-        CurrentBorrows.Remove(borrow);
-        BorrowHistory.Add(borrow); // move to history
-    }
+
+        private void ReturnBook(BorrowedBookView borrow)
+        {
+            if (MessageBox.Show("Return this book?", "Confirm", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+            BorrowService.ReturnBook(borrow.BorrowID);
+            CurrentBorrows.Remove(borrow);
+            BorrowHistory.Add(borrow); // move to history
+        }
 
         private static void ExtendBorrow(BorrowedBookView borrow)
         {
-            
-            var laterDate=(DateTime.Today > borrow.ExpectedReturnDate ? DateTime.Today : borrow.ExpectedReturnDate) ??
-                          DateTime.Now;
-            borrow.ExpectedReturnDate=laterDate.AddDays(14) ;
+
+            var laterDate = (DateTime.Today > borrow.ExpectedReturnDate ? DateTime.Today : borrow.ExpectedReturnDate) ??
+                            DateTime.Now;
+            borrow.ExpectedReturnDate = laterDate.AddDays(14);
         }
 
         private void AddBorrow()
@@ -74,11 +75,22 @@ namespace Library_System_Management.Views
             if (window.ShowDialog() != true) return;
 
             var newBorrow = window.NewBorrow;
-            if (newBorrow?.Book == null)return;
+            if (newBorrow?.Book == null) return;
             BorrowService.IssueBook(newBorrow.Book, SelectedMember, newBorrow.ExpectedReturnDate);
             LoadBorrowHistory();
             MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
 
+        }
+        private void BtnExportMember_Click(object sender, RoutedEventArgs e)
+        {
+            ExportDialog.ExportWindow([SelectedMember]);
+        }
+
+        private void BtnExportBorrow_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new List<IExportable>(CurrentBorrows);
+            data.AddRange(BorrowHistory);
+            ExportDialog.ExportWindow(data);
         }
     }
 }

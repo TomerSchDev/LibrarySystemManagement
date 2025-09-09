@@ -10,17 +10,11 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <!--   public int BookID { get; set; }
-                public string Title { get; set; } = Title;
-                public string Author { get; set; } = Author;
-                public string ISBN { get; set; } = ISBN;
-                public int Quantity { get; set; } = Quantity;
-                public int Available { get; set; }
-                 -->
-        <!-- Member Info -->
         <GroupBox Header="Book Information" Padding="10" Margin="0,0,0,10">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding SelectedBook.Title}" FontSize="16" FontWeight="Bold"/>
@@ -30,9 +24,10 @@
                 <TextBlock Text="{Binding SelectedBook.Available}" />
             </StackPanel>
         </GroupBox>
-
+        <Button Grid.Row="1" Content="Export Book Info" Width="*" Height="20" Margin="0,-100,0,0" Click="BtnExport_Click"/>
+    
         <!-- Current Borrowed Books -->
-        <GroupBox Grid.Row="1" Header="Current Borrowed Copies" Padding="10" Margin="0,0,0,10">
+        <GroupBox Grid.Row="2" Header="Current Borrowed Copies" Padding="10" Margin="0,0,0,10">
             <DockPanel>
                 <!-- Borrowed Books Table -->
                 <DataGrid ItemsSource="{Binding CurrentBorrows}" AutoGenerateColumns="False"
@@ -59,7 +54,7 @@
         </GroupBox>
 
         <!-- Borrow History -->
-        <GroupBox Grid.Row="2" Header="Borrow History" Padding="10">
+        <GroupBox Grid.Row="3" Header="Borrow History" Padding="10">
             <DataGrid ItemsSource="{Binding BorrowHistory}" AutoGenerateColumns="False"
                       CanUserAddRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
@@ -72,5 +67,6 @@
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
+        <Button Grid.Row="4" Content="Export Book Borrow History" Width="*" Height="20" Margin="0,-100,0,0" Click="BtnExportHistory_Click"/>
     </Grid>
 </Window>

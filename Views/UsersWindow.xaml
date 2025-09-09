@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="UsersWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <DataGrid Name="dgUsers" AutoGenerateColumns="False" Grid.Row="0" Margin="0,0,0,10" IsReadOnly="True"
                   MouseDoubleClick="dgUsers_MouseDoubleClick">
             
@@ -19,6 +23,8 @@
         </DataGrid>
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="Add User" Width="100" Height="40" Margin="5" Click="BtnAdd_Click"/>
+            <Button Content="Export Users" Width="100" Height="40" Margin="5" Click="BtnExport_Click"/>
+
         </StackPanel>
     </Grid>
 </Window>

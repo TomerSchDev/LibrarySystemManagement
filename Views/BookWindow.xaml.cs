@@ -6,6 +6,7 @@ using Library_System_Management.Helpers;
 using Library_System_Management.Models;
 using Library_System_Management.Models.ViewModels;
 using Library_System_Management.Services;
+using Library_System_Management.Services.ExportServices;
 using Library_System_Management.Views;
 
 namespace Library_System_Management.Views
@@ -104,5 +105,12 @@ namespace Library_System_Management.Views
             if (dgBooks.SelectedItem is not Book selected) return;
             OpenBookWindow(selected);
         }
+
+        private void BtnExport_Click(object sender, RoutedEventArgs e)
+        {
+            ExportDialog.ExportWindow([..BookService.GetAllBooks()]);
+        }
+        
     }
+
 }

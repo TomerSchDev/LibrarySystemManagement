@@ -1,6 +1,6 @@
 ﻿namespace Library_System_Management.Models;
 
-public class Member()
+public class Member() : IExportable
 {
     public Member(string NameText, string EmailText, string PhoneText) : this()
     {
@@ -13,4 +13,5 @@ public class Member()
     public string FullName { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
+    public string ExportClassName =>"Member";
 }

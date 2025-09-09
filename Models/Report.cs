@@ -8,7 +8,7 @@ public enum SeverityLevel
     HIGH = 3 ,
     CRITICAL =4
 }
-public record Report()
+public record Report() : IExportable
 {
     public Report(SeverityLevel SeverityLevel, string User,int userId, UserRole Role, DateTime ActionDate, string ReportMessage) : this()
     {
@@ -29,4 +29,5 @@ public record Report()
     public String RoleString => Role.ToString();
     
     public string SeverityLevelString => SeverityLevel.ToString();
+    public string ExportClassName => "Report";
 }

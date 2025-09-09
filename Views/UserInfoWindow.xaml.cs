@@ -16,7 +16,7 @@ public partial class UserInfoWindow : Window, INotifyPropertyChanged
     private INotifyPropertyChanged _notifyPropertyChangedImplementation;
     
     
-    public ObservableCollection<Report> RecordsHistory { get; set; }
+    public ObservableCollection<Report>? RecordsHistory { get; set; }
     public UserInfoWindow(User user)
     {
         InitializeComponent();
@@ -49,7 +49,16 @@ public partial class UserInfoWindow : Window, INotifyPropertyChanged
   
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string name = null)
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    
+
+    private void BtnExportReports_Click(object sender, RoutedEventArgs e)
+    {
+        if (RecordsHistory != null) ExportDialog.ExportWindow([..RecordsHistory]);
+    }
+
+    private void BtnExportUser_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([SelectedUser]);
+    }
 }

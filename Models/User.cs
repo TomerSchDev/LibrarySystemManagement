@@ -12,7 +12,7 @@ namespace Library_System_Management.Models
     
     }
 
-    public class User()
+    public class User() : IExportable
     {
         public User(string username, string password) : this()
         {
@@ -42,5 +42,6 @@ namespace Library_System_Management.Models
 
         public string UserRoleToString => Role.ToString();
 
-}
+        public string ExportClassName => "User";
+    }
 }

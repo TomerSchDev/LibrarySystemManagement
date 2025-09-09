@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Library_System_Management.Models;
 using Library_System_Management.Models.ViewModels;
 using Library_System_Management.Services;
 
@@ -83,5 +84,16 @@ public partial class IssueReturnWindow : Window
         if (bookIssue is { Member: not null, Book: not null }) BorrowService.IssueBook(bookIssue.Book, bookIssue.Member, bookIssue.ReturnDate);
         LoadTables();
         MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+   
+    private void BtnExportHistory_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([..BorrowHistory]);
+    }
+
+    private void BtnExportCurrent_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([..CurrentBorrows]);
     }
 }

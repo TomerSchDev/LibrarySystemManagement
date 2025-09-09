@@ -37,4 +37,9 @@ public partial class UsersWindow : Window
         if (!AuthService.CreateNewUser(user)) return;
         LoadTables();
     }
+
+    private void BtnExport_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([..AuthService.GetUsers()]);
+    }
 }

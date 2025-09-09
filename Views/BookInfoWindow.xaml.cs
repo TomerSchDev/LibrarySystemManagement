@@ -56,4 +56,18 @@ public partial class BookInfoWindow : Window
         }
 
     }
+
+   
+    private void BtnExport_Click(object sender, RoutedEventArgs e)
+    {
+        ExportDialog.ExportWindow([SelectedBook]);
+    }
+
+    private void BtnExportHistory_Click(object sender, RoutedEventArgs e)
+    {
+        var data =  new List<IExportable>();
+        data.AddRange(BorrowHistory);
+        data.AddRange(CurrentBorrows);
+        ExportDialog.ExportWindow(data);
+    }
 }

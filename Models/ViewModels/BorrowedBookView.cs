@@ -1,7 +1,7 @@
 ﻿namespace Library_System_Management.Models.ViewModels
 
 {
-    public class BorrowedBookView
+    public class BorrowedBookView : IExportable
     {
         public int BorrowID { get; set; }
         public int BookID { get; set; }
@@ -29,5 +29,7 @@
         {
             return $"Borrow record ID: {BorrowID},  Book Id {BookID}, Book Title {Book?.Title}  Member Id {MemberID}, Member Name {Member?.FullName} Status {Status}";
         }
+
+        public string ExportClassName => "BorrowedBookView";
     }
 }

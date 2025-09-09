@@ -1,6 +1,6 @@
 ﻿namespace Library_System_Management.Models;
 
-public record Book()
+public record Book() : IExportable
 {
     public Book(string title, string author, string isbn,int quantity):this()
     {
@@ -17,4 +17,5 @@ public record Book()
     public string ISBN { get; set; }
     public int Quantity { get; set; }
     public int Available { get; set; }
+    public string ExportClassName =>"Book";
 }
