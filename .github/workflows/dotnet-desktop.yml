@@ -58,7 +58,11 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore "./Library System Management.sln"
+        run: dotnet restore "./Library_System_Management.sln"
 
       - name: Build
-        run: dotnet build "./Library System Management.sln" --configuration Release --no-restore
+        run: dotnet build "./Library_System_Management.sln" --configuration Release --no-restore
+        
+      - name: Run unit tests
+        run: dotnet test "./TestsLibrary/TestsLibrary.csproj" --configuration Release --no-build --logger "trx"
+

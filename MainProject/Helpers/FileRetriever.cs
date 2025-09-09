@@ -13,7 +13,7 @@ public static class FileRetriever
         var binParent = Directory.GetParent(exePath)?.Parent?.Parent?.FullName;
         if (!string.IsNullOrEmpty(binParent) && Directory.Exists(binParent))
         {
-            ProjectRoot = Directory.GetParent(binParent)!.FullName;
+            ProjectRoot = Directory.GetParent(Directory.GetParent(binParent)!.FullName)!.FullName;
         }
         else
         {
