@@ -7,10 +7,10 @@ using System.Text.Json;
 
 public static class ConfigHelper
 {
-    private static JsonDocument _appSettingsJson;
+    private static readonly JsonDocument  _doc;
     static ConfigHelper()
     {
-        const string jsonPath = "appsettings.local.json";
+        var jsonPath = FileRetriever.RetrieveFIlePath( "appsettings.local.json");
         if (!File.Exists(jsonPath))
         {
             Console.WriteLine("appsettings file not found... writing new one... user will get error trying to use it");
@@ -18,24 +18,27 @@ public static class ConfigHelper
         }
         
         var json = File.ReadAllText(jsonPath);
-        _appSettingsJson = JsonDocument.Parse(json);
+        _doc = JsonDocument.Parse(json);
     }
 
-    public static JsonElement? LoadConfigProperty(string key)
+    private static JsonElement Root => _doc.RootElement;
+    public static string? GetString(string path)
     {
-        using var jsonDocument = _appSettingsJson;
-        try
+        var keys = path.Split(':');
+        var current = keys.Aggregate(Root, (current1, k) => current1.GetProperty(k));
+        return current.ValueKind switch
         {
-            return jsonDocument.RootElement.GetProperty(key);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            throw new KeyNotFoundException("Missing key in appsettings.local.json", ex);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show("An error occured while reading appsettings.local.json", ex.Message);
-            return null;
-        }
+            JsonValueKind.String => current.GetString(),
+            JsonValueKind.Number => current.GetRawText() // returns number as string, e.g. "587"
+            ,
+            JsonValueKind.True or JsonValueKind.False => current.GetBoolean().ToString(),
+            _ => current.ToString()
+        };
+    }
+
+    // Or return a section for more advanced lookup
+    public static JsonElement GetSection(string section)
+    {
+        return Root.GetProperty(section);
     }
 }

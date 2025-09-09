@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Library_System_Management.Helpers;
 using Library_System_Management.Models;
 
 namespace Library_System_Management.Database
 {
     public static class DatabaseManager
     {
-        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "LibraryDB.sqlite");
+        private static readonly string DbPath = FileRetriever.RetrieveFIlePath(Path.Combine( "Resources", "LibraryDB.sqlite"));
 
         static DatabaseManager()
         {

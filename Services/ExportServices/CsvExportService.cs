@@ -8,7 +8,7 @@ public class CsvExportService : IDataExportService
 {
     public string Name => "CSV";
 
-    public void Export(IEnumerable<IExportable> data, string filePath)
+    public bool Export(IEnumerable<IExportable> data, string filePath)
     {
         var exportables = data.ToList();
         var properties = IDataExportService.GetObjectPropitiates(exportables);
@@ -24,5 +24,7 @@ public class CsvExportService : IDataExportService
         }
 
         File.WriteAllText($"{filePath}.csv", sb.ToString(), Encoding.UTF8);
+        return true;
+
     }
 }

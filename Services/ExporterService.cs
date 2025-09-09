@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Windows;
+using Library_System_Management.Helpers;
 using Library_System_Management.Models;
 using Library_System_Management.Services.ExportServices;
 
@@ -23,9 +25,11 @@ public static class ExporterService
     {
         return Services.Keys.ToList();
     }
-    public static void Export(IEnumerable<IExportable> data,string filePath, string exportService)
+    public static bool Export(IEnumerable<IExportable> data,string filePath, string exportService)
     {
-        Services.GetValueOrDefault(exportService)?.Export(data,filePath);
-
+        var exported = Services.GetValueOrDefault(exportService)?.Export(data, FileRetriever.RetrieveFIlePath(filePath));
+        if (exported == null || (bool)!exported) return false;
+         MessageBox.Show("Data exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+         return true;
     }
 }

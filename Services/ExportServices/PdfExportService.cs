@@ -7,7 +7,7 @@ namespace Library_System_Management.Services.ExportServices;
 public class PdfExportService : IDataExportService
 {
     public string Name => "PDF";
-    public void Export(IEnumerable<IExportable> data, string filePath)
+    public bool Export(IEnumerable<IExportable> data, string filePath)
     {
         // Example using PdfSharpCore
         var document = new PdfDocument();
@@ -32,5 +32,6 @@ public class PdfExportService : IDataExportService
         }
 
         document.Save($"{filePath}.pdf");
+        return true;
     }
 }
