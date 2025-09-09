@@ -35,9 +35,7 @@ public partial class ExportDialog : Window
             MessageBox.Show("Please enter a file name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-
-        var fullFileName = FileName + "." + SelectedExportService?.ToLower();
-        if (SelectedExportService != null) ExporterService.Export(_data, fullFileName, SelectedExportService);
+        if (SelectedExportService != null) ExporterService.Export(_data, FileName, SelectedExportService);
         MessageBox.Show("Data exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         DialogResult = true;
     }

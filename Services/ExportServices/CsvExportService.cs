@@ -23,6 +23,6 @@ public class CsvExportService : IDataExportService
             sb.AppendLine(string.Join(",", properties.Select(p => $"\"{p.GetValue(item)?.ToString()?.Replace("\"", "\"\"")}\"")));
         }
 
-        File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+        File.WriteAllText($"{filePath}.csv", sb.ToString(), Encoding.UTF8);
     }
 }

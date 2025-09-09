@@ -31,11 +31,6 @@ public class PdfExportService : IDataExportService
             y += 20;
         }
 
-        document.Save(filePath);
-    }
-
-    public void Export<T>(IEnumerable<T> data, string filePath, string? password)
-    {
-        throw new NotImplementedException();
+        document.Save($"{filePath}.pdf");
     }
 }
