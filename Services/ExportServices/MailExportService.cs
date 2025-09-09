@@ -42,40 +42,43 @@ public class MailExportService : IDataExportService
         var smtpConfig = new SmtpConfig();
         try
         {
-           
+            var smtpElementNullable = ConfigHelper.LoadConfigProperty(SmtpJsonKey);
+            if (smtpElementNullable == null || smtpElementNullable.Value.ValueKind == JsonValueKind.Undefined)
+                throw new Exception("Missing SMTP config section!");
+
+            var smtp = smtpElementNullable.Value;
             smtpConfig=new SmtpConfig
             {
-                Username = ConfigHelper.GetString(SmtpJsonKey+":Username"),
-                Password = ConfigHelper.GetString(SmtpJsonKey+":Password"),
-                Host = ConfigHelper.GetString(SmtpJsonKey+":Host"),
-                Port = int.Parse(ConfigHelper.GetString(SmtpJsonKey+":Port") ?? "0"),
+                Username = smtp.GetProperty("Username").GetString(),
+                Password = smtp.GetProperty("Password").GetString(),
+                Host = smtp.GetProperty("Host").GetString(),
+                Port = smtp.GetProperty("Port").GetInt32(),
                 Filled = true
             };
         }
         catch (Exception e)
         {
-            MessageBox.Show("Error parsing SMTP config, error : "+e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Error parssing SMTP config, error : "+e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         return smtpConfig;
     }
-    public bool Export(IEnumerable<IExportable> data, string filePath)
+    public void Export(IEnumerable<IExportable> data, string filePath)
     {
         var smtpConfig = ParseConfig();
-        if (!smtpConfig.Filled) return false;
+        if (!smtpConfig.Filled) return;
         var emailDialog = new EmailPromptWindow();
-        if (emailDialog.ShowDialog() != true) return false;
+        if (emailDialog.ShowDialog() != true) return;
         var recipientEmail = emailDialog.EnteredEmail;
         new CsvExportService().Export(data, filePath);
         var newFilePath = filePath + ".csv";
         var message = new MimeMessage();
-        if (smtpConfig.Username == null) return false;
-        var addressFrom = ParseMailboxAddress(smtpConfig.Username);
-        if (addressFrom == null) return false;
+        var addressFrom = ParseMailboxAddress("");
+        if (addressFrom == null) return;
         
         message.From.Add(addressFrom);
         var addressTo = ParseMailboxAddress(recipientEmail);
-        if (addressTo == null) return false;
+        if (addressTo == null) return;
 
         message.To.Add(addressTo);
         message.Subject = "Exported Data from Library System";
@@ -100,6 +103,5 @@ public class MailExportService : IDataExportService
         client.Authenticate(smtpConfig.Username, smtpConfig.Password);
         client.Send(message);
         client.Disconnect(true);
-        return true;
     }
 }

@@ -30,6 +30,7 @@ public static class ExporterService
         var exported = Services.GetValueOrDefault(exportService)?.Export(data, FileRetriever.RetrieveFIlePath(filePath));
         if (exported == null || (bool)!exported) return false;
          MessageBox.Show("Data exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+         ReportingService.ReportEvent(SeverityLevel.INFO, "Data exported successfully by service : "+exportService);
          return true;
     }
 }
