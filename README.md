@@ -151,7 +151,7 @@ This is an educational/demonstration project. Feel free to fork and modify for y
 
 ## License
 
-This project is provided as-is for educational purposes.
+![MIT License](https://img.shields.io/badge/license-MIT-green)
 
 ## Support
 
