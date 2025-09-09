@@ -1,0 +1,22 @@
+﻿<Window x:Class="Library_System_Management.Views.PopUpDialogs.EmailPromptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+
+        mc:Ignorable="d"
+        Title="Email Prompt Window" Height="200" Width="500">
+    <StackPanel Margin="16">
+        <TextBlock Text="Recipient Email Address:" Margin="0,0,0,5"/>
+        <StackPanel Orientation="Vertical">
+            <ComboBox x:Name="ComboEmails" Width="300" Margin="0,0,0,0"
+                      VerticalAlignment="Center"
+                      IsEditable="False"
+                      DisplayMemberPath="FullName"
+                      SelectionChanged="ComboEmails_SelectionChanged"/>
+            <TextBox x:Name="TxtEmail" Width="300" VerticalAlignment="Center"/>
+            <Button Content="Confirm" HorizontalAlignment="Center" Width="100" Margin="0,10,0,0" 
+                    Click="BtnConfirm_Click"/>       
+        </StackPanel>
+    </StackPanel>
+</Window>
