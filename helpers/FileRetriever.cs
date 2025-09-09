@@ -20,7 +20,6 @@ public static class FileRetriever
             ProjectRoot = exePath;
         }
 #else
-            // In prod, always use the EXE directory
             ProjectRoot = exePath;
 #endif
     }
