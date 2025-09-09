@@ -1,17 +1,35 @@
-﻿using Library_System_Management.Database;
+﻿using System.Diagnostics;
+using Library_System_Management.Database;
 using Library_System_Management.Models;
 using Library_System_Management.Services;
 using Xunit;
 
 namespace TestsLibrary;
 
-public class BookServiceTests
+public class BookServiceTests :IDisposable
 {
+    private readonly string _dbTestPath;
+
+    public BookServiceTests()
+    {
+        // Use a unique temp database file for each test class instance
+        _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
+        DatabaseManager.InitializeDatabaseForTest(_dbTestPath);
+    }
+
+    public void Dispose()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        // Cleanup: remove temp database after each test class instance
+        if (File.Exists(_dbTestPath)) return;
+        File.Delete(_dbTestPath);
+    }
+    
     
     [Fact]
     public void CanAddBook()
     {
-        DatabaseManager.InitializeDatabase();
         var book = new Book
         {
             Title = "Test Book",
@@ -24,7 +42,6 @@ public class BookServiceTests
 
     private static Book AddBookToDatabase()
     {
-        DatabaseManager.InitializeDatabase();
         var book = new Book
         {
             Title = "Test Book",
