@@ -10,22 +10,38 @@ namespace Library_System_Management.Database
 {
     public static class DatabaseManager
     {
-        private static readonly string DbPath = FileRetriever.RetrieveFIlePath(Path.Combine( "Resources", "LibraryDB.sqlite"));
+        private static readonly string DbPath =
+            FileRetriever.RetrieveFIlePath(Path.Combine("Resources", "LibraryDB.sqlite"));
 
-        static DatabaseManager()
+        private static readonly System.Threading.AsyncLocal<string?> DbTestPath = new();
+
+        static void SetDir(string dbPath)
         {
-            var folder = Path.GetDirectoryName(DbPath);
+            var folder = Path.GetDirectoryName(dbPath);
             if (!Directory.Exists(folder) && folder != null)
                 Directory.CreateDirectory(folder);
         }
 
+        static DatabaseManager()
+        {
+            SetDir(DbPath);
+            DbTestPath.Value = DbPath;
+        }
+
+        public static void InitializeDatabaseForTest(string newPath)
+        {
+            DbTestPath.Value= newPath;
+            SetDir(DbTestPath.Value);
+            InitializeDatabase();
+        }
         private static SqliteConnection GetConnection()
         {
-            var conn = new SqliteConnection($"Data Source={DbPath}");
+            var conn = new SqliteConnection($"Data Source={DbTestPath.Value}");
             conn.Open();
             return conn;
         }
 
+       
         // -------------------- Table Initialization --------------------
         public static void InitializeDatabase()
         {
