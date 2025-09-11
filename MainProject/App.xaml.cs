@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Library_System_Management.Database;
+using LibrarySystemModels.Services;
 
 namespace Library_System_Management
 {
@@ -8,10 +8,6 @@ namespace Library_System_Management
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
-            // Initialize SQLite database and tables
-            DatabaseManager.InitializeDatabase();
-            
         }
     }
 }

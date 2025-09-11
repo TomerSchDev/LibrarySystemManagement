@@ -1,58 +1,82 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using Library_System_Management.Models;
-using Library_System_Management.Services;
+using Library_System_Management.ExportServices;
+using LibrarySystemModels.Helpers;
+using LibrarySystemModels.Services;
+using LibrarySystemModels.Models;
 
-namespace Library_System_Management.Views;
-
-public partial class SearchWindow : Window
+namespace Library_System_Management.Views
 {
-    public SearchWindow()
+    public partial class SearchWindow : Window
     {
-        InitializeComponent();
+        private List<Book> _allBooks = new();
+        private List<Member> _allMembers = new();
 
-        // Load all initially
-        dgBooks.ItemsSource = BookService.GetAllBooks();
-        dgMembers.ItemsSource = MemberService.GetAllMembers();
-
-        // Add double-click events
-        dgBooks.MouseDoubleClick += (s, e) =>
+        public SearchWindow()
         {
-            if (dgBooks.SelectedItem is not Book book) return;
-            var win = new BookInfoWindow(book);
-            win.ShowDialog();
-        };
+            InitializeComponent();
+            Loaded += SearchWindow_Loaded;
 
-        dgMembers.MouseDoubleClick += (s, e) =>
+            dgBooks.MouseDoubleClick += (s, e) =>
+            {
+                if (dgBooks.SelectedItem is not Book book) return;
+                var win = new BookInfoWindow(book);
+                win.ShowDialog();
+            };
+
+            dgMembers.MouseDoubleClick += (s, e) =>
+            {
+                if (dgMembers.SelectedItem is not Member member) return;
+                var win = new MemberInfoWindow(member);
+                win.ShowDialog();
+            };
+        }
+
+        private async void SearchWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (dgMembers.SelectedItem is not Member member) return;
-            var win = new MemberInfoWindow(member);
-            win.ShowDialog();
-        };
+            try
+            {
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxService.ShowMessage(ex);
+            }
+        }
+
+        private async Task LoadDataAsync()
+        {
+            var booksRes = await BookService.GetAllBooksAsync(FlowSide.Client);
+            _allBooks = booksRes.ActionResult ? booksRes.Data : [];
+            dgBooks.ItemsSource = _allBooks;
+
+            var membersRes = await MemberService.GetAllMembersAsync(FlowSide.Client);
+            _allMembers = membersRes.ActionResult ? membersRes.Data : [];
+            dgMembers.ItemsSource = _allMembers;
+        }
+
+        private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var query = TxtSearch.Text.Trim().ToLower();
+
+            dgBooks.ItemsSource = string.IsNullOrEmpty(query)
+                ? _allBooks
+                : _allBooks.Where(b =>
+                    (!string.IsNullOrEmpty(b.Title) && b.Title.Contains(query, System.StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(b.Author) && b.Author.Contains(query, System.StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(b.ISBN) && b.ISBN.Contains(query, System.StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+
+            dgMembers.ItemsSource = string.IsNullOrEmpty(query)
+                ? _allMembers
+                : _allMembers.Where(m =>
+                    (!string.IsNullOrEmpty(m.FullName) && m.FullName.Contains(query, System.StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(m.Email) && m.Email.Contains(query, System.StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(m.Phone) && m.Phone.Contains(query, System.StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+        }
     }
-    private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        var query = TxtSearch.Text.Trim();
-
-        // Books search → Title, Author, ISBN
-        var books = BookService.GetAllBooks()
-            .Where(b =>
-                (!string.IsNullOrEmpty(b.Title) && b.Title.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
-                (!string.IsNullOrEmpty(b.Author) && b.Author.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
-                (!string.IsNullOrEmpty(b.ISBN) && b.ISBN.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase))
-            )
-            .ToList();
-        dgBooks.ItemsSource = books;
-
-        // Members search → FullName, Email, Phone
-        var members = MemberService.GetAllMembers()
-            .Where(m =>
-                (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
-                (!string.IsNullOrEmpty(m.Email) && m.Email.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase)) ||
-                (!string.IsNullOrEmpty(m.Phone) && m.Phone.ToLower().Contains(query,StringComparison.CurrentCultureIgnoreCase))
-            )
-            .ToList();
-        dgMembers.ItemsSource = members;
-    }
-
 }

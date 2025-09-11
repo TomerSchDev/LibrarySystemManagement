@@ -1,4 +1,5 @@
-﻿using Library_System_Management.Models;
+﻿using LibrarySystemModels.Models;
+using LibrarySystemModels.Services;
 using Xunit;
 
 namespace TestsLibrary;
@@ -8,9 +9,9 @@ public class EntitiesCreationTests
     [Fact]
     public void CanCreateUser()
     {
-        var user = new User("testuser", "testpass", UserRole.Librarian);
+        var user = AuthService.CreateUser("testuser", "testpass", UserRole.Librarian);
         Assert.Equal("testuser", user.Username);
-        Assert.True(user.ValidatePassword("testpass"));
+        Assert.True(EncryptionService.VerifyHash(user,"testpass"));
         Assert.Equal(UserRole.Librarian, user.Role);
     }
 

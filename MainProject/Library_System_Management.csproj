@@ -53,7 +53,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\" />
+      <ProjectReference Include="..\LibrarySystemModels\LibrarySystemModels.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-using Library_System_Management.Models;
+using LibrarySystemModels.Services;
+using LibrarySystemModels.Models;
 
 namespace Library_System_Management.Views.PopUpDialogs;
 
@@ -30,7 +31,7 @@ public partial class AddNewUser : Window
             return;
         }
 
-        User = new User(username, password, role);
+        User = AuthService.CreateUser(username, password, role);
         DialogResult = true;
         Close();
     }

@@ -1,73 +1,107 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Library_System_Management.Helpers;
-using Library_System_Management.Models;
-using Library_System_Management.Models.ViewModels;
-using Library_System_Management.Services;
+using LibrarySystemModels.Services;
+using LibrarySystemModels.Helpers;
+using LibrarySystemModels.Models;
+using LibrarySystemModels.Models.ViewModels;
+using System.Collections.Generic;
+using Library_System_Management.ExportServices;
 
-namespace Library_System_Management.Views;
-
-public partial class BookInfoWindow : Window
+namespace Library_System_Management.Views
 {
-    public Book SelectedBook { get; }
-    public ObservableCollection<BorrowedBookView> CurrentBorrows { get; set; }
-    public ObservableCollection<BorrowedBookView> BorrowHistory { get; set; }
-    public ICommand MemberInfoCommend { get; }
-    public BookInfoWindow(Book b)
+    public partial class BookInfoWindow : Window
     {
-        SelectedBook = b;
-        CurrentBorrows = [];
-        BorrowHistory = [];
-        LoadTables();
-        InitializeComponent();
-        MemberInfoCommend = new RelayCommand<BorrowedBookView>(OpenMemberInfoWindow);
-        DataContext = this;
+        public Book SelectedBook { get; }
+        public ObservableCollection<BorrowedBookView> CurrentBorrows { get; set; } = new();
+        public ObservableCollection<BorrowedBookView> BorrowHistory { get; set; } = new();
+        public ICommand MemberInfoCommand { get; }
 
-
-    }
-
-    private void OpenMemberInfoWindow(BorrowedBookView borrow)
-    {
-        var memberId=borrow.MemberID;
-        var member=MemberService.GetMember(memberId);
-        if (member == null) return;
-        var memberInfo = new MemberInfoWindow(member);
-        memberInfo.Show();
-        LoadTables();
-    }
-    private void LoadTables()
-    {
-        CurrentBorrows.Clear();
-        BorrowHistory.Clear();
-        var borrowList = BorrowService.GetBorrowHistoryByBookId(SelectedBook.BookID);
-        foreach (var b in borrowList)
+        public BookInfoWindow(Book b)
         {
-            Console.WriteLine(b.toString());
-            if (b.Returned)
-            {
-                BorrowHistory.Add(b);
-            }
+            SelectedBook = b;
+            InitializeComponent();
+            MemberInfoCommand = new RelayCommand(OpenMemberInfoWindow);
+            DataContext = this;
+            Loaded += BookInfoWindow_Loaded;
+        }
 
-            else
+        private async void BookInfoWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
             {
-                CurrentBorrows.Add(b);
+                await LoadTablesAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxService.ShowMessage(ex);
             }
         }
 
-    }
+        private async Task LoadTablesAsync()
+        {
+            CurrentBorrows.Clear();
+            BorrowHistory.Clear();
 
-   
-    private void BtnExport_Click(object sender, RoutedEventArgs e)
-    {
-        ExportDialog.ExportWindow([SelectedBook]);
-    }
+            try
+            {
+                var result = await BorrowService.GetBorrowHistoryByBookIdAsync(FlowSide.Client, SelectedBook.BookID);
+                if (result.ActionResult)
+                {
+                    foreach (var b in result.Data)
+                    {
+                        // Console.WriteLine(b.ToString());
+                        if (b.Returned)
+                            BorrowHistory.Add(b);
+                        else
+                            CurrentBorrows.Add(b);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Failed to load borrows: " + (result.Message ?? ""), "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading borrow history:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-    private void BtnExportHistory_Click(object sender, RoutedEventArgs e)
-    {
-        var data =  new List<IExportable>();
-        data.AddRange(BorrowHistory);
-        data.AddRange(CurrentBorrows);
-        ExportDialog.ExportWindow(data);
+        private async void OpenMemberInfoWindow(object? param)
+        {
+            try
+            {
+                if (param is not BorrowedBookView borrow) return;
+
+                var memberResult = await MemberService.GetMemberAsync(FlowSide.Client, borrow.MemberID);
+                var member = memberResult.ActionResult ? memberResult.Data : null;
+                if (member == null) return;
+
+                var memberInfo = new MemberInfoWindow(member);
+                memberInfo.ShowDialog();
+
+                await LoadTablesAsync(); // Reload in case the member status/data changed
+            }
+            catch (Exception e)
+            {
+                MessageBoxService.ShowMessage(e);
+            }
+        }
+
+        private void BtnExport_Click(object sender, RoutedEventArgs e)
+        {
+            ExportDialog.ExportWindow([SelectedBook]);
+        }
+
+        private void BtnExportHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new List<BorrowedBookView>();
+            data.AddRange(BorrowHistory);
+            data.AddRange(CurrentBorrows);
+            ExportDialog.ExportWindow([..data]);
+        }
     }
 }

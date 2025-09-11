@@ -1,19 +1,25 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Library_System_Management.Helpers;
-using Library_System_Management.Models;
-using Library_System_Management.Models.ViewModels;
-using Library_System_Management.Services;
+using Library_System_Management.ExportServices;
+using LibrarySystemModels.Services;
 using Library_System_Management.Views.PopUpDialogs;
+using LibrarySystemModels.Helpers;
+using LibrarySystemModels.Models;
+using LibrarySystemModels.Models.ViewModels;
 
 namespace Library_System_Management.Views
 {
     public partial class MemberInfoWindow : Window
     {
         public Member SelectedMember { get; }
-        public ObservableCollection<BorrowedBookView> CurrentBorrows { get; set; }
-        public ObservableCollection<BorrowedBookView> BorrowHistory { get; set; }
+
+        public ObservableCollection<BorrowedBookView> CurrentBorrows { get; set; } = new();
+        public ObservableCollection<BorrowedBookView> BorrowHistory { get; set; } = new();
 
         public ICommand ReturnBookCommand { get; }
         public ICommand ExtendBorrowCommand { get; }
@@ -24,64 +30,87 @@ namespace Library_System_Management.Views
             InitializeComponent();
             SelectedMember = member;
 
-            CurrentBorrows = new ObservableCollection<BorrowedBookView>();
-            BorrowHistory = new ObservableCollection<BorrowedBookView>();
-            CurrentBorrows.Clear();
-            BorrowHistory.Clear();
+            ReturnBookCommand = new RelayCommand(param =>
+            {
+                if (param is BorrowedBookView borrow)
+                    ReturnBook(borrow);
+            });
+            ExtendBorrowCommand = new RelayCommand(param =>
+            {
+                if (param is BorrowedBookView borrow)
+                    ExtendBorrow(borrow);
+            });
+            AddBorrowCommand = new RelayCommand(_ => AddBorrow());
 
-            ReturnBookCommand = new RelayCommand<BorrowedBookView>(ReturnBook);
-            ExtendBorrowCommand = new RelayCommand<BorrowedBookView>(ExtendBorrow);
-            AddBorrowCommand = new RelayCommand(AddBorrow);
-            LoadBorrowHistory();
             DataContext = this;
+            Loaded += async (_, _) => await LoadBorrowHistoryAsync();
         }
 
-        private void LoadBorrowHistory()
+        private async Task LoadBorrowHistoryAsync()
         {
             CurrentBorrows.Clear();
             BorrowHistory.Clear();
-            var memberBorrows = BorrowService.GetBorrowHistoryByMemberId(SelectedMember.MemberID);
-            CurrentBorrows = new ObservableCollection<BorrowedBookView>(
-                memberBorrows.Where(b => !b.Returned)
-            );
-            BorrowHistory = new ObservableCollection<BorrowedBookView>(
-                memberBorrows.Where(b => b.Returned)
-            );
-            ;
-
+            var memberBorrowsResult = await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Client, SelectedMember.MemberID);
+            if (memberBorrowsResult is { ActionResult: true, Data: not null })
+            {
+                foreach (var borrow in memberBorrowsResult.Data)
+                {
+                    if (!borrow.Returned)
+                        CurrentBorrows.Add(borrow);
+                    else
+                        BorrowHistory.Add(borrow);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Failed to load borrows: " + memberBorrowsResult.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-
-
-        private void ReturnBook(BorrowedBookView borrow)
+        private async void ReturnBook(BorrowedBookView borrow)
         {
             if (MessageBox.Show("Return this book?", "Confirm", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
-            BorrowService.ReturnBook(borrow.BorrowID);
+
+            await BorrowService.ReturnBookAsync(FlowSide.Client, borrow.BorrowID);
             CurrentBorrows.Remove(borrow);
-            BorrowHistory.Add(borrow); // move to history
+            BorrowHistory.Add(borrow);
         }
 
-        private static void ExtendBorrow(BorrowedBookView borrow)
+        private static async void ExtendBorrow(BorrowedBookView borrow)
         {
-
-            var laterDate = (DateTime.Today > borrow.ExpectedReturnDate ? DateTime.Today : borrow.ExpectedReturnDate) ??
-                            DateTime.Now;
-            borrow.ExpectedReturnDate = laterDate.AddDays(14);
+            try
+            {
+                var laterDate = (DateTime.Today > borrow.ExpectedReturnDate ? DateTime.Today : borrow.ExpectedReturnDate) ?? DateTime.Now;
+                var newDate = laterDate.AddDays(BorrowedBook.ExtendDays);
+                var span = newDate.Subtract(borrow.ExpectedReturnDate!.Value);
+                await BorrowService.ExtendBookAsync(FlowSide.Client,borrow.BorrowID,span.Days);
+                MessageBox.Show("Extant book successfully");
+            }
+            catch (Exception e)
+            {
+                MessageBoxService.ShowMessage(e);
+            }
         }
 
-        private void AddBorrow()
+        private async void AddBorrow()
         {
-            // Show a dialog where librarian selects a book to borrow
-            var window = new AddBorrowWindow(SelectedMember);
-            if (window.ShowDialog() != true) return;
+            try
+            {
+                var window = new AddBorrowWindow(SelectedMember);
+                if (window.ShowDialog() != true) return;
+                var newBorrow = window.NewBorrow;
+                if (newBorrow?.Book == null) return;
 
-            var newBorrow = window.NewBorrow;
-            if (newBorrow?.Book == null) return;
-            BorrowService.IssueBook(newBorrow.Book, SelectedMember, newBorrow.ExpectedReturnDate);
-            LoadBorrowHistory();
-            MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                await BorrowService.IssueBookAsync(FlowSide.Client, newBorrow.Book.BookID, SelectedMember.MemberID, newBorrow.ExpectedReturnDate);
+                await LoadBorrowHistoryAsync();
+                MessageBox.Show("Borrowed book successes", "Confirm", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception e)
+            {
+                MessageBoxService.ShowMessage(e);
+            }
         }
+
         private void BtnExportMember_Click(object sender, RoutedEventArgs e)
         {
             ExportDialog.ExportWindow([SelectedMember]);
@@ -89,9 +118,9 @@ namespace Library_System_Management.Views
 
         private void BtnExportBorrow_Click(object sender, RoutedEventArgs e)
         {
-            var data = new List<IExportable>(CurrentBorrows);
+            var data = new List<BorrowedBookView>(CurrentBorrows);
             data.AddRange(BorrowHistory);
-            ExportDialog.ExportWindow(data);
+            ExportDialog.ExportWindow([..data]);
         }
     }
 }

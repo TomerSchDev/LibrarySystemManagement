@@ -1,8 +1,6 @@
 ﻿using System.Windows;
-using Library_System_Management.Helpers;
-using Library_System_Management.Models;
-using Library_System_Management.Services;
-using Library_System_Management.Services.ExportServices;
+using Library_System_Management.ExportServices;
+using LibrarySystemModels.Models;
 
 namespace Library_System_Management.Views;
 

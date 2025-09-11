@@ -1,6 +1,5 @@
 ﻿using System.Windows;
-using Library_System_Management.Helpers;
-using Library_System_Management.Models;
+using LibrarySystemModels.Models;
 
 namespace Library_System_Management.Views
 {
@@ -16,7 +15,7 @@ namespace Library_System_Management.Views
         
         private void BtnBooks_Click(object sender, RoutedEventArgs e)
         {
-            BookWindow bookWindow = new BookWindow();
+            BooksWindow bookWindow = new BooksWindow();
             bookWindow.ShowDialog();
         }
 

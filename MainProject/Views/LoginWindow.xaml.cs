@@ -1,6 +1,9 @@
-﻿using System.Windows;
-using Library_System_Management.Services;
-using Library_System_Management.Models;
+﻿using System.Threading.Tasks;
+using System.Windows;
+using Library_System_Management.ExportServices;
+using LibrarySystemModels.Helpers;
+using LibrarySystemModels.Services;
+using LibrarySystemModels.Models; // (for User.DefaultUser and model)
 
 namespace Library_System_Management.Views
 {
@@ -11,27 +14,25 @@ namespace Library_System_Management.Views
             InitializeComponent();
         }
 
-        private void BtnLogin_Click(object sender, RoutedEventArgs e)
+        private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            var user = AuthService.GetUserByUsername(txtUsername.Text);
-            if (user == null)
+            try
             {
-                MessageBox.Show("Couldn't find user with this username : " + txtUsername.Text, "Warning",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                var user = await AuthService.LoginAsync(FlowSide.Client, txtUsername.Text, txtPassword.Password);
+                if (User.IsDefaultUser(user))
+                {
+                    MessageBox.Show($"Couldn't find user with this username: {txtUsername.Text}", "Warning",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-
-            if (user.ValidatePassword(txtPassword.Password))
-            {
-                MessageBox.Show("Login successful!");
-                var dashboard = new DashboardWindow(user);
-                dashboard.Show();
+                var dashWindow = new DashboardWindow(user);
+                dashWindow.Show();
                 Close();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Invalid credentials!");
+                MessageBoxService.ShowMessage(ex);
             }
         }
     }

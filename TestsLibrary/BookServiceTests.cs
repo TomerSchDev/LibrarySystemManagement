@@ -1,80 +1,107 @@
-﻿using System.Diagnostics;
-using Library_System_Management.Database;
-using Library_System_Management.Models;
-using Library_System_Management.Services;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using LibrarySystemModels.Helpers;
+using LibrarySystemModels.Models;
+using LibrarySystemModels.Services;
 using Xunit;
 
-namespace TestsLibrary;
-
-public class BookServiceTests :IDisposable
+namespace TestsLibrary
 {
-    private readonly string _dbTestPath;
+    public class BookServiceTests : IDisposable
+    {
+        private readonly string _dbTestPath;
 
-    public BookServiceTests()
-    {
-        // Use a unique temp database file for each test class instance
-        _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
-        DatabaseManager.InitializeDatabaseForTest(_dbTestPath);
-    }
-
-    public void Dispose()
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        // Cleanup: remove temp database after each test class instance
-        if (File.Exists(_dbTestPath)) return;
-        File.Delete(_dbTestPath);
-    }
-    
-    
-    [Fact]
-    public void CanAddBook()
-    {
-        var book = new Book
+        public BookServiceTests()
         {
-            Title = "Test Book",
-            Author = "Author Name",
-            ISBN = "1234567890"
-        };
-        Assert.NotNull(book);
-        Assert.True(BookService.AddBook(book));
-    }
+            // Unique temp DB for isolation
+            _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
+            DataBaseService.GetLocalDatabase().InitializeDatabase(_dbTestPath);
+        }
 
-    private static Book AddBookToDatabase()
-    {
-        var book = new Book
+        public void Dispose()
         {
-            Title = "Test Book",
-            Author = "Author Name",
-            ISBN = "1234567890"
-        };
-        Assert.NotNull(book);
-        Assert.True(BookService.AddBook(book));
-        return book;
-    }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            if (File.Exists(_dbTestPath))
+                File.Delete(_dbTestPath);
+        }
 
-    private static int GetBookId(Book book)
-    {
-        var books= BookService.GetAllBooks();
-        return books.FirstOrDefault(b => b.Equals(book))!.BookID;
-    }
+        private async Task<bool> AddBookAsync(Book book)
+        {
+            var res = await BookService.AddBookAsync(FlowSide.Server, book);
+            return res.ActionResult;
+        }
 
-    [Fact]
-    public void CanDeleteBook()
-    {
-        AddBookToDatabase();
-        var bookId = GetBookId(AddBookToDatabase());
-        Assert.True(BookService.DeleteBook(bookId));
-    }
-    [Fact]
-    public void CanUpdateBook()
-    {
-        var b = AddBookToDatabase();
-        var bookId= GetBookId(b);
-        b.BookID = bookId;
-        b.Title = "Test Book2"; //change it so it change
-        b.Author = "Author Name2";
-        Assert.False(b.Equals(BookService.GetBookById(bookId)));
-        Assert.True(BookService.UpdateBook(b));
+        private async Task<Book> AddBookToDatabaseAsync()
+        {
+            var book = new Book
+            {
+                Title = "Test Book",
+                Author = "Author Name",
+                ISBN = "1234567890"
+            };
+            Assert.NotNull(book);
+            var result = await AddBookAsync(book);
+            Assert.True(result);
+            var all = await BookService.GetAllBooksAsync(FlowSide.Server);
+            var added = all.Data?.FirstOrDefault(b => b.Title == book.Title && b.Author == book.Author);
+            Assert.NotNull(added);
+            return added!;
+        }
+
+        private async Task<int> GetBookIdAsync(Book book)
+        {
+            var books = await BookService.GetAllBooksAsync(FlowSide.Server);
+            var found = books.Data?.FirstOrDefault(b => b.Title == book.Title && b.Author == book.Author && b.ISBN == book.ISBN);
+            Assert.NotNull(found);
+            return found.BookID;
+        }
+
+        [Fact]
+        public async Task CanAddBook()
+        {
+            var book = new Book
+            {
+                Title = "Test Book",
+                Author = "Author Name",
+                ISBN = "1234567890"
+            };
+            Assert.NotNull(book);
+            var result = await AddBookAsync(book);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task CanDeleteBook()
+        {
+            var book = await AddBookToDatabaseAsync();
+            var bookId = await GetBookIdAsync(book);
+
+            var deleteResult = await BookService.DeleteBookAsync(FlowSide.Server, bookId);
+            Assert.True(deleteResult.ActionResult);
+
+            var afterDelete = await BookService.GetBookByIdAsync(FlowSide.Server, bookId);
+            Assert.False(afterDelete.ActionResult);
+        }
+
+        [Fact]
+        public async Task CanUpdateBook()
+        {
+            var book = await AddBookToDatabaseAsync();
+            var bookId = await GetBookIdAsync(book);
+
+            book.BookID = bookId;
+            book.Title = "Test Book 2";
+            book.Author = "Author Name 2";
+
+            var updateResult = await BookService.UpdateBookAsync(FlowSide.Server, book);
+            Assert.True(updateResult.ActionResult);
+
+            var updated = await BookService.GetBookByIdAsync(FlowSide.Server, bookId);
+            Assert.Equal("Test Book 2", updated.Data?.Title);
+            Assert.Equal("Author Name 2", updated.Data?.Author);
+        }
     }
 }

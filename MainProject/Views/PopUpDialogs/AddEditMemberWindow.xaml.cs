@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Library_System_Management.Models;
+using LibrarySystemModels.Models;
 
 namespace Library_System_Management.Views.PopUpDialogs;
 
