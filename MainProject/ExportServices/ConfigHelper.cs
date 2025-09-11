@@ -1,15 +1,15 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Windows;
 using LibrarySystemModels.Helpers;
 
-namespace LibrarySystemModels.Helpers;
+namespace Library_System_Management.ExportServices;
 
 public static class ConfigHelper
 {
     private static readonly JsonDocument  _doc;
     static ConfigHelper()
     {
+        
         var jsonPath = FileRetriever.RetrieveFIlePath( "appsettings.local.json");
         if (!File.Exists(jsonPath))
         {
@@ -19,6 +19,7 @@ public static class ConfigHelper
         
         var json = File.ReadAllText(jsonPath);
         _doc = JsonDocument.Parse(json);
+        
     }
 
     private static JsonElement Root => _doc.RootElement;

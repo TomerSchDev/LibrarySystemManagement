@@ -17,7 +17,10 @@ namespace LibrarySystemModels.Services
             }
 
             var user = await GetUserByUsernameAsync(FlowSide.Server, username);
-            return !EncryptionService.VerifyHash(user, password) ? User.DefaultUser : user;
+            Console.WriteLine($"User {user.Username} found.");
+            var res = EncryptionService.VerifyHash(user, password);
+            Console.WriteLine($"Username {user.Username}  with password {password} is {res}");
+            return res? user: User.DefaultUser;;
         }
 
         public static async Task<User> GetUserByUsernameAsync(FlowSide flowSide, string username)
@@ -40,6 +43,7 @@ namespace LibrarySystemModels.Services
         private static async Task<User> SeedDefaultAdminAsync()
         {
             var defUser = CreateUser("Admin", "admin123", UserRole.Admin);
+            Console.WriteLine($"User created: {defUser.Username} in seed defaults");
             await Task.Run(() => DataBaseService.GetLocalDatabase().Insert(defUser));
             return defUser;
         }

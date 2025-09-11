@@ -15,7 +15,7 @@ namespace LibrarySystemModels.Services
                 const string errorMessage = "You do not have permission to add members! , action was written to report";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    
                     await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Member>(null!, false, errorMessage);
@@ -45,8 +45,6 @@ namespace LibrarySystemModels.Services
                 var errorMessage = $"User try to update {info} without enough permission";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show("You do not have permission to update member! , action was written to report", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Member>(new Member(), false, errorMessage);
@@ -84,8 +82,6 @@ namespace LibrarySystemModels.Services
                 var errorMessage = $"User try to delete member id: {memberId} without enough permission";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show("You do not have permission to delete member! , action was written to report", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Member>(new Member(), false, errorMessage);
@@ -114,7 +110,7 @@ namespace LibrarySystemModels.Services
                 const string errorMessage = "You do not have permission to get members! , action was written to report";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<List<Member>>(new List<Member>(), false, errorMessage);
@@ -143,7 +139,7 @@ namespace LibrarySystemModels.Services
                 const string errorMessage = "You do not have permission to get Member! , action was written to report";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Member>(new Member(), false, errorMessage);

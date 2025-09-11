@@ -17,7 +17,7 @@ namespace LibrarySystemModels.Services
             {
                 const string errorMessage = "You do not have permission to add books! , action was written to report";
                 if (side != FlowSide.Client) return new ResultResolver<Book>(null!, false, errorMessage);
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                
                 await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 return new ResultResolver<Book>(null!, false, errorMessage);
             }
@@ -47,8 +47,6 @@ namespace LibrarySystemModels.Services
                 var errorMessage = $"User try to update {bookInfo} without enough permission";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show("You do not have permission to update book! , action was written to report", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Book>(new Book(), false, errorMessage);
@@ -77,8 +75,6 @@ namespace LibrarySystemModels.Services
                 var errorMessage = $"User try to delete book id: {id} without enough permission";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show("You do not have permission to delete book! , action was written to report", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
                     await ReportingService.ReportEventAsync(side, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Book>(new Book(), false, errorMessage);
@@ -107,8 +103,6 @@ namespace LibrarySystemModels.Services
                 const string errorMessage = "You do not have permission to get Books! , action was written to report";
                 if (side != FlowSide.Client)
                     return new ResultResolver<List<Book>>(new List<Book>(), false, errorMessage);
-                MessageBox.Show(errorMessage, "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
                 await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 return new ResultResolver<List<Book>>(new List<Book>(), false, errorMessage);
             }
@@ -119,6 +113,7 @@ namespace LibrarySystemModels.Services
             try
             {
                 var books = await Task.Run(() => DataBaseService.GetLocalDatabase().SelectAll<Book>());
+                
                 return new ResultResolver<List<Book>>(books, true, "");
             }
             catch (Exception e)
@@ -136,8 +131,6 @@ namespace LibrarySystemModels.Services
                 const string errorMessage = "You do not have permission to get Book! , action was written to report";
                 if (side == FlowSide.Client)
                 {
-                    MessageBox.Show(errorMessage, "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
                     await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 }
                 return new ResultResolver<Book>(new Book(), false, errorMessage);

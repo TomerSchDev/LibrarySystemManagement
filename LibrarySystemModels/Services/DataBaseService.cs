@@ -7,26 +7,50 @@ namespace LibrarySystemModels.Services;
 
 public static class DataBaseService
 {
-    private static readonly RestApiConnector? RestApiConnector;
-    private static readonly LocalDatabaseHandler LocalDatabaseHandler;
+    private static RestApiConnector? RestApiConnector;
+    private static LocalDatabaseHandler LocalDatabaseHandler;
 
-    public static bool IsLocalMode { get; set; } = false;
+    public static bool IsLocalMode { get; set; } 
+    private static readonly bool IsServerMode ;
+    private static bool Initilized ;
 
-    static DataBaseService()
+
+    
+    public static void SetModes(bool isServerMode, bool isLocalMode)
     {
+        isServerMode=isServerMode;
+        isLocalMode=isLocalMode;
+        Initilized = true;
+    }
+
+public static void Init()
+    {
+        if (!Initilized)
+        {
+            SetModes(false, false);
+        }
+
         LocalDatabaseHandler = new LocalDatabaseHandler();
         LocalDatabaseHandler.InitializeDatabase(null);
+        if (IsServerMode) return;
         try
         {
-            var fileUrlPath =FileRetriever.RetrieveFIlePath("ApiBaseUrl.txt");
-            var url = File.ReadAllText(fileUrlPath);
+            var url = "http://localhost:5000";
+            var fileUrlPath = FileRetriever.RetrieveFIlePath("ApiBaseUrl.txt");
+            if (File.Exists(fileUrlPath))
+            {
+                url = File.ReadAllText(fileUrlPath);
+            }
+
             if (string.IsNullOrEmpty(url))
             {
                 IsLocalMode = true;
-                RestApiConnector=null;
+                RestApiConnector = null;
             }
-            IsLocalMode=false;
-            RestApiConnector = new RestApiConnector(url);
+
+            Console.WriteLine($"app path : {url}");
+            IsLocalMode = false;
+            RestApiConnector = new RestApiConnector(url + "/");
         }
         catch (Exception e)
         {
@@ -35,7 +59,6 @@ public static class DataBaseService
             RestApiConnector = null;
         }
     }
-
     public static async Task<ResultResolver<TResult>> Insert<TResult, TPayload>(string url, TPayload payload)
     {
         if (IsLocalMode)

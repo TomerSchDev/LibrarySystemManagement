@@ -14,7 +14,7 @@ public static class EncryptionService
     {
         try
         {
-            var key = ConfigHelper.GetString("Keys:MasterKey");
+            const string key = "btp5P\"JJ)D?@62a";
             MasterKey = key ?? "Test Key";
         }
         catch (Exception e)

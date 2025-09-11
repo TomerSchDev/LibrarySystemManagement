@@ -1,45 +1,32 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using LibrarySystemModels.Models;
 using LibrarySystemModels.Services;
 using Library_System_Management.Views.PopUpDialogs;
-using LibrarySystemModels.Helpers;
-using LibrarySystemModels.Models;
 using Library_System_Management.ExportServices;
+using LibrarySystemModels.Helpers;
 
 namespace Library_System_Management.Views
 {
     public partial class BooksWindow : Window
     {
+        public BooksViewModel ViewModel { get; } = new();
+
         public BooksWindow()
         {
             InitializeComponent();
-            Loaded += BooksWindow_Loaded;
-        }
-
-        private async void BooksWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                await LoadBooksAsync();
-            }
-            catch (Exception ex)
-            {
-                MessageBoxService.ShowMessage(ex);
-            }
-        }
-
-        private async Task LoadBooksAsync()
-        {
-            var result = await BookService.GetAllBooksAsync(FlowSide.Client);
-            if (result.ActionResult)
-                this.dgBooks.ItemsSource = result.Data;
-            else
-                MessageBox.Show("Failed to load books: " + result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            DataContext = ViewModel;
+            Loaded += async (s, e) => await ViewModel.LoadBooksAsync();
         }
 
         private void dgBooks_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgBooks.SelectedItem is Book item)
+            if (DgBooks.SelectedItem is Book item)
                 OpenBookWindow(item);
         }
 
@@ -49,7 +36,7 @@ namespace Library_System_Management.Views
             {
                 var bookInfoWindow = new BookInfoWindow(book);
                 bookInfoWindow.ShowDialog();
-                await LoadBooksAsync();
+                await ViewModel.LoadBooksAsync();
             }
             catch (Exception e)
             {
@@ -75,7 +62,7 @@ namespace Library_System_Management.Views
                 }
                 b.Available = b.Quantity;
                 await BookService.AddBookAsync(FlowSide.Client, b);
-                await LoadBooksAsync();
+                await ViewModel.LoadBooksAsync();
             }
             catch (Exception ex)
             {
@@ -87,7 +74,7 @@ namespace Library_System_Management.Views
         {
             try
             {
-                if (dgBooks.SelectedItem is Book selected)
+                if (DgBooks.SelectedItem is Book selected)
                 {
                     var editWindow = new AddEditBookWindow(selected);
                     if (editWindow.ShowDialog() != true)
@@ -95,17 +82,20 @@ namespace Library_System_Management.Views
                         MessageBox.Show($"Couldn't edit Book " + selected.Title, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+
                     var b = editWindow.GetEditingBook();
                     if (b == null)
                     {
                         MessageBox.Show($"Couldn't edit Book " + selected.Title, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
+
                     var listBorrowedRes = await BorrowService.GetBorrowHistoryByBookIdAsync(FlowSide.Client, b.BookID);
                     var borrowedCount = listBorrowedRes.ActionResult ? listBorrowedRes.Data.Count : 0;
                     b.Available = Math.Max(b.Quantity - borrowedCount, 0);
+
                     await BookService.UpdateBookAsync(FlowSide.Client, b);
-                    await LoadBooksAsync();
+                    await ViewModel.LoadBooksAsync();
                 }
                 else
                 {
@@ -122,10 +112,10 @@ namespace Library_System_Management.Views
         {
             try
             {
-                if (dgBooks.SelectedItem is Book selected)
+                if (DgBooks.SelectedItem is Book selected)
                 {
                     await BookService.DeleteBookAsync(FlowSide.Client, selected.BookID);
-                    await LoadBooksAsync();
+                    await ViewModel.LoadBooksAsync();
                 }
                 else
                 {
@@ -140,7 +130,7 @@ namespace Library_System_Management.Views
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
-            if (dgBooks.SelectedItem is Book selected)
+            if (DgBooks.SelectedItem is Book selected)
                 OpenBookWindow(selected);
         }
 
@@ -157,6 +147,41 @@ namespace Library_System_Management.Views
             catch (Exception ex)
             {
                 MessageBoxService.ShowMessage(ex);
+            }
+        }
+
+        // ------ INNER VIEWMODEL --------
+        public class BooksViewModel : INotifyPropertyChanged
+        {
+            private ObservableCollection<Book> _books = new();
+            public ObservableCollection<Book> Books
+            {
+                get => _books;
+                set { _books = value; OnPropertyChanged(); }
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+            private void OnPropertyChanged([CallerMemberName] string? prop = null) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
+            public async Task LoadBooksAsync()
+            {
+                var result = await BookService.GetAllBooksAsync(FlowSide.Client);
+                Console.WriteLine("Books loaded");
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Books.Clear();
+                    if (result.ActionResult)
+                    {
+                        foreach (var book in result.Data)
+                            Books.Add(book);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to load books: " + result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
             }
         }
     }

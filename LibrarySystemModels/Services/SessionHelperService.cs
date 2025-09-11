@@ -38,7 +38,7 @@ public static class SessionHelperService
 
         if (!User.IsDefaultUser(_cachedUser)) return _cachedUser;
         // Client calls REST API /api/auth/current to fetch the user
-        var res =await DataBaseService.Get<User>("api/Auth/Current");
+        var res =await DataBaseService.Get<User>("api/Auth/current");
         if (!res.ActionResult) return User.DefaultUser;
         _cachedUser = res.Data;
         return _cachedUser;

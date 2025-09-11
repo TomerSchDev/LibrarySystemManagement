@@ -19,10 +19,13 @@ namespace LibraryRestApi.Controllers
         {
             var user = await AuthService.LoginAsync(FlowSide.Server, request.Username, request.Password);
             if (LibrarySystemModels.Models.User.IsDefaultUser(user))
-                return Unauthorized("User does not exist or password is incorrect.");
+            {
+                var log = new LoginResponse() { Token = "", User = user };
+                return Unauthorized(new ResultResolver<LoginResponse>(log,false,""));
+            }
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token, user = new { user.UserID, user.Username, user.Role } });
+            return Ok(new {  token, user });
         }
 
         [HttpPost("register")]
@@ -40,11 +43,10 @@ namespace LibraryRestApi.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var username = User.Claims.FirstOrDefault(c => c.Type is ClaimTypes.Name or JwtRegisteredClaimNames.Sub)?.Value;
-            var user = username != null ? await AuthService.GetUserByUsernameAsync(FlowSide.Server, username) : LibrarySystemModels.Models.User.DefaultUser;
-            if (LibrarySystemModels.Models.User.IsDefaultUser(user))
-                return NotFound("User not found.");
-            return Ok(new { user.UserID, user.Username, user.Role });
+            var res = await SessionHelperService.GetCurrentUser(FlowSide.Server);
+            Console.WriteLine($"current user username: {res.Username} with Role permission: {res.Role}" );
+            var ret = new ResultResolver<User>(res, true, "");
+            return Ok(new {ret});
         }
 
         private string GenerateJwtToken(User user)

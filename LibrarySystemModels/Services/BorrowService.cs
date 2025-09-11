@@ -15,7 +15,7 @@ namespace LibrarySystemModels.Services
             {
                 const string errorMessage = "You do not have permission to issue books!";
                 if (side != FlowSide.Client) return new ResultResolver<BorrowedBook>(null!, false, errorMessage);
-                MessageBox.Show(errorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
+                
                 await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 return new ResultResolver<BorrowedBook>(null!, false, errorMessage);
             }
@@ -60,7 +60,7 @@ namespace LibrarySystemModels.Services
             {
                 const string errorMessage = "You do not have permission to return books!";
                 if (side != FlowSide.Client) return new ResultResolver<BorrowedBook>(null!, false, errorMessage);
-                MessageBox.Show(errorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
+                
                 await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 return new ResultResolver<BorrowedBook>(null!, false, errorMessage);
             }
@@ -100,7 +100,7 @@ namespace LibrarySystemModels.Services
             {
                 const string errorMessage = "You do not have permission to extend Borrow book!";
                 if (side != FlowSide.Client) return new(null!, false, errorMessage);
-                MessageBox.Show(errorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
+                
                 await ReportingService.ReportEventAsync(FlowSide.Client, SeverityLevel.LOW, errorMessage);
                 return new ResultResolver<BorrowedBook>(null!, false, errorMessage);
             }
