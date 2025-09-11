@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library System Management", "MainProject/Library_System_Management.csproj", "{14972AC3-CC5C-4C80-9F95-16A027860B87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library System Management", "MainProject\Library_System_Management.csproj", "{14972AC3-CC5C-4C80-9F95-16A027860B87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsLibrary", "TestsLibrary/TestsLibrary.csproj", "{2B8A8686-61A2-4258-B0D9-5C9A881D1F69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsLibrary", "TestsLibrary\TestsLibrary.csproj", "{2B8A8686-61A2-4258-B0D9-5C9A881D1F69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryRestApi", "LibraryRestApi/LibraryRestApi.csproj", "{8DC26985-09A1-48BD-BFD5-E9913C6F9CED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryRestApi", "LibraryRestApi\LibraryRestApi.csproj", "{8DC26985-09A1-48BD-BFD5-E9913C6F9CED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9063A245-9AF0-4B44-A501-886175EB4227}"
 	ProjectSection(SolutionItems) = preProject
