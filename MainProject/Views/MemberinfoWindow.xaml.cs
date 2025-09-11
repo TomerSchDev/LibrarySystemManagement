@@ -50,7 +50,7 @@ namespace Library_System_Management.Views
         {
             CurrentBorrows.Clear();
             BorrowHistory.Clear();
-            var memberBorrowsResult = await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Client, SelectedMember.MemberID);
+            var memberBorrowsResult = await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Client, SelectedMember.MemberID-1);
             if (memberBorrowsResult is { ActionResult: true, Data: not null })
             {
                 foreach (var borrow in memberBorrowsResult.Data)

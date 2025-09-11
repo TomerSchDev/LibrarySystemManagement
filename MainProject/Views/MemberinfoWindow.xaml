@@ -20,7 +20,7 @@
                 <TextBlock Text="{Binding SelectedMember.Phone}" />
             </StackPanel>
         </GroupBox>
-        <Button Grid.Row="1" Content="Export Member Info" Width="*" Height="20" Margin="5" Click="BtnExportMember_Click"/>
+        <Button Grid.Row="1" Content="Export Member Info" Width="Auto" Height="20" Margin="5" Click="BtnExportMember_Click"/>
 
         <!-- Current Borrowed Books -->
         <GroupBox Grid.Row="2" Header="Current Borrowed Books" Padding="10" Margin="0,0,0,10">
@@ -56,7 +56,7 @@
                 </DataGrid>
             </DockPanel>
         </GroupBox>
-        <Button Grid.Row="3" Content="Export Borrow records" Width="*" Height="20" Margin="5" Click="BtnExportBorrow_Click"/>
+        <Button Grid.Row="3" Content="Export Borrow records" Width="Auto" Height="20" Margin="5" Click="BtnExportBorrow_Click"/>
 
         <!-- Borrow History -->
         <GroupBox Grid.Row="4" Header="Borrow History" Padding="10">

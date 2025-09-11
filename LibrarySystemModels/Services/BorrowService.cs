@@ -7,7 +7,7 @@ namespace LibrarySystemModels.Services
 {
     public static class BorrowService
     {
-        private const string BorrowServiceUrl = "api/BorrowedBooks/";
+        private const string BorrowServiceUrl = "api/Borrow/";
 
         public static async Task<ResultResolver<BorrowedBook>> IssueBookAsync(FlowSide side, int bookId, int memberId, DateTime? returnDate)
         {

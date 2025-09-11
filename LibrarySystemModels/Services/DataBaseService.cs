@@ -37,7 +37,7 @@ public static void Init(string? path)
         if (_isServerMode) return;
         try
         {
-            var url = "http://localhost:5000";
+            var url = "http://localhost:5164";
             var fileUrlPath = FileRetriever.RetrieveFIlePath("ApiBaseUrl.txt");
             if (File.Exists(fileUrlPath))
             {
