@@ -56,6 +56,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
+      - name: Print working directory (Windows)
+        shell: pwsh
+        run: Write-Host $PWD
 
       - name: Restore dependencies
         run: dotnet restore "./Library_System_Management.sln"
