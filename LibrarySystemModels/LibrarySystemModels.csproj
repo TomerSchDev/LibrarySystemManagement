@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="PresentationCore">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\9.0.7\PresentationCore.dll</HintPath>
+      </Reference>
+      <Reference Include="PresentationFramework">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\9.0.7\PresentationFramework.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    </ItemGroup>
+
+</Project>

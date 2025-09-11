@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library System Management", "MainProject/Library_System_Management.csproj", "{14972AC3-CC5C-4C80-9F95-16A027860B87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsLibrary", "TestsLibrary\TestsLibrary.csproj", "{2B8A8686-61A2-4258-B0D9-5C9A881D1F69}"
