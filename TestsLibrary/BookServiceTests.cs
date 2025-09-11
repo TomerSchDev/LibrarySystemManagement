@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using LibrarySystemModels.Helpers;
+﻿using LibrarySystemModels.Helpers;
 using LibrarySystemModels.Models;
 using LibrarySystemModels.Services;
 using Xunit;
@@ -17,20 +13,23 @@ namespace TestsLibrary
         {
             // Unique temp DB for isolation
             _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
-            DataBaseService.GetLocalDatabase().InitializeDatabase(_dbTestPath);
+            DataBaseService.SetModes(false,true);
+            DataBaseService.Init(_dbTestPath);
+
+            AuthService.LoginAsync(FlowSide.Client,"Admin", "admin123").Wait();
         }
 
         public void Dispose()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            if (File.Exists(_dbTestPath))
-                File.Delete(_dbTestPath);
+            if (File.Exists(_dbTestPath)) return;
+                //File.Delete(_dbTestPath);
         }
 
         private async Task<bool> AddBookAsync(Book book)
         {
-            var res = await BookService.AddBookAsync(FlowSide.Server, book);
+            var res = await BookService.AddBookAsync(FlowSide.Client, book);
             return res.ActionResult;
         }
 
@@ -45,7 +44,7 @@ namespace TestsLibrary
             Assert.NotNull(book);
             var result = await AddBookAsync(book);
             Assert.True(result);
-            var all = await BookService.GetAllBooksAsync(FlowSide.Server);
+            var all = await BookService.GetAllBooksAsync(FlowSide.Client);
             var added = all.Data?.FirstOrDefault(b => b.Title == book.Title && b.Author == book.Author);
             Assert.NotNull(added);
             return added!;
@@ -53,7 +52,7 @@ namespace TestsLibrary
 
         private async Task<int> GetBookIdAsync(Book book)
         {
-            var books = await BookService.GetAllBooksAsync(FlowSide.Server);
+            var books = await BookService.GetAllBooksAsync(FlowSide.Client);
             var found = books.Data?.FirstOrDefault(b => b.Title == book.Title && b.Author == book.Author && b.ISBN == book.ISBN);
             Assert.NotNull(found);
             return found.BookID;

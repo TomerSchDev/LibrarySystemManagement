@@ -34,7 +34,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 DataBaseService.SetModes(true, false);
-DataBaseService.Init();
+DataBaseService.Init(null);
 var app = builder.Build();
 SessionHelperService.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
 /*

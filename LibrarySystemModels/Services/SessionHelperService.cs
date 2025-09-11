@@ -17,7 +17,7 @@ public static class SessionHelperService
 
     public static async Task<User> GetCurrentUser(FlowSide side)
     {
-        
+        if (!User.IsDefaultUser(_cachedUser)) return _cachedUser;
         if (side == FlowSide.Server)
         {
             // Standard server logic using HTTP context for JWT

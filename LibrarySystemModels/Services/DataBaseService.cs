@@ -10,29 +10,31 @@ public static class DataBaseService
     private static RestApiConnector? RestApiConnector;
     private static LocalDatabaseHandler LocalDatabaseHandler;
 
-    public static bool IsLocalMode { get; set; } 
-    private static readonly bool IsServerMode ;
+    private static bool IsLocalMode { get; set; } 
+    private static bool _isServerMode ;
     private static bool Initilized ;
 
 
     
     public static void SetModes(bool isServerMode, bool isLocalMode)
     {
-        isServerMode=isServerMode;
-        isLocalMode=isLocalMode;
+        if (Initilized)return;
+        _isServerMode=isServerMode;
+        IsLocalMode=isLocalMode;
         Initilized = true;
     }
 
-public static void Init()
+public static void Init(string? path)
     {
-        if (!Initilized)
-        {
-            SetModes(false, false);
-        }
-
         LocalDatabaseHandler = new LocalDatabaseHandler();
-        LocalDatabaseHandler.InitializeDatabase(null);
-        if (IsServerMode) return;
+        LocalDatabaseHandler.InitializeDatabase(path);
+        if (Initilized && (_isServerMode ||IsLocalMode))
+        {
+            return;
+        }
+        SetModes(false, false);
+        
+        if (_isServerMode) return;
         try
         {
             var url = "http://localhost:5000";
@@ -94,6 +96,7 @@ public static void Init()
 
     public static async Task<ResultResolver<User>> Login(string username, string password)
     {
+        
         if (IsLocalMode)
             return await LocalApiSimulator.LoginAsync(username, password);
         else

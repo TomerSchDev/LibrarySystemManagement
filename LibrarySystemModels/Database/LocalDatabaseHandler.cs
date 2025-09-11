@@ -9,7 +9,8 @@ namespace LibrarySystemModels.Database
     {
         private string _dbTestPath =
             FileRetriever.RetrieveFIlePath(Path.Combine("Resources", "LibraryDB.sqlite"));
-        private bool _initialized = false;
+        private static bool _initialized = false;
+        private static User? _user =null;
 
         private static void SetDir(string dbPath)
         {
@@ -36,7 +37,7 @@ namespace LibrarySystemModels.Database
             CreateTable<Member>();
             CreateTable<BorrowedBook>();
             CreateTable<Report>();
-            this._initialized = true;
+            _initialized = true;
         }
 
         public User? GetCurrentUser()

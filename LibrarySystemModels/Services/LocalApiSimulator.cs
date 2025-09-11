@@ -5,6 +5,7 @@ namespace LibrarySystemModels.Services;
 
 public static class LocalApiSimulator
 {
+    private static User _CurrentUser;
     // INSERT (POST)
     public static async Task<ResultResolver<TResult>?> InsertAsync<TResult, TPayload>(string url, TPayload data)
     {
@@ -90,7 +91,7 @@ public static class LocalApiSimulator
     {
         return await Task.Run(async () =>
         {
-            
+
             // Books (all)
             if (url.Equals("api/Books/", StringComparison.OrdinalIgnoreCase))
                 return await BookService.GetAllBooksAsync(FlowSide.Server) as ResultResolver<TResult>;
@@ -121,29 +122,39 @@ public static class LocalApiSimulator
             if (url.StartsWith("api/Reports/user/", StringComparison.OrdinalIgnoreCase))
             {
                 var userId = ParseId(url);
-                var user =await AuthService.GetUserByIdAsync(FlowSide.Server, userId);
-                return await ReportingService.GetReportsByUserAsync(FlowSide.Server, user ?? AuthService.CreateUser("Default user","pass",UserRole.Admin)) as ResultResolver<TResult>;
+                var user = await AuthService.GetUserByIdAsync(FlowSide.Server, userId);
+                return await ReportingService.GetReportsByUserAsync(FlowSide.Server,
+                    user ?? AuthService.CreateUser("Default user", "pass", UserRole.Admin)) as ResultResolver<TResult>;
             }
 
             // BorrowedBooks history by member
             if (url.StartsWith("api/BorrowedBooks/history/member/", StringComparison.OrdinalIgnoreCase))
             {
                 int memberId = ParseId(url);
-                return await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Server, memberId) as ResultResolver<TResult>;
+                return await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Server, memberId) as
+                    ResultResolver<TResult>;
             }
 
             // BorrowedBooks history by book
             if (url.StartsWith("api/BorrowedBooks/history/book/", StringComparison.OrdinalIgnoreCase))
             {
                 int bookId = ParseId(url);
-                return await BorrowService.GetBorrowHistoryByBookIdAsync(FlowSide.Server, bookId) as ResultResolver<TResult>;
+                return await BorrowService.GetBorrowHistoryByBookIdAsync(FlowSide.Server, bookId) as
+                    ResultResolver<TResult>;
             }
 
             // BorrowedBooks all history
             if (url.Equals("api/BorrowedBooks/history/all", StringComparison.OrdinalIgnoreCase))
                 return await BorrowService.GetBorrowHistoryEveryThingAsync(FlowSide.Server) as ResultResolver<TResult>;
 
-            throw new NotImplementedException($"[LocalApiSimulator.GetAsync] Route not mapped: {url}");
+            if (url.Equals("api/Auth/current", StringComparison.CurrentCulture))
+            {
+                return await Task.Run(() =>
+                    new ResultResolver<User>(_CurrentUser, !User.IsDefaultUser(_CurrentUser), "") as
+                        ResultResolver<TResult>);
+            }
+
+            return null;
         });
     }
 
@@ -159,8 +170,9 @@ public static class LocalApiSimulator
     {
         return await Task.Run(() =>
         {
-            // For local mode: TODO implement your own logic or just return failure.
-            return new ResultResolver<User>(null!, false, "Local login not supported.");
+            var user =  AuthService.LoginAsync(FlowSide.Server, username, password).Result;
+            _CurrentUser = user;
+            return User.IsDefaultUser(user) ? new ResultResolver<User>(user,false,"") : new ResultResolver<User>(user,true,"");
         });
     }
 }

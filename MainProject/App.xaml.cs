@@ -8,7 +8,7 @@ namespace Library_System_Management
         protected override void OnStartup(StartupEventArgs e)
         {
             DataBaseService.SetModes(false, false);
-            DataBaseService.Init();
+            DataBaseService.Init(null);
             base.OnStartup(e);
         }
     }
