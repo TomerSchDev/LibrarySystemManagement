@@ -12,21 +12,21 @@ namespace LibraryRestApi.Controllers
     public class MembersController : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> AddMember([FromBody] Member member)
+        public async Task<ActionResult> AddMember([FromBody] Member member)
         {
             var result = await MemberService.AddMemberAsync(FlowSide.Server, member);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateMember([FromBody] Member member)
+        public async Task<ActionResult> UpdateMember([FromBody] Member member)
         {
             var result = await MemberService.UpdateMemberAsync(FlowSide.Server, member);
             return Ok(result);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteMember(int id)
+        public async Task<ActionResult> DeleteMember(int id)
         {
             var result = await MemberService.DeleteMemberAsync(FlowSide.Server, id);
             return Ok(result);

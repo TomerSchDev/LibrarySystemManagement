@@ -14,7 +14,7 @@ namespace TestsLibrary
             _dbTestPath = Path.Combine("Resources", $"test_report_{Guid.NewGuid()}.sqlite");
             DataBaseService.SetModes(false, true);
             DataBaseService.Init(_dbTestPath);
-            AuthService.LoginAsync(FlowSide.Client, "Admin", "admin123").Wait();
+            Utils.LogInUser(null, FlowSide.Client);
         }
 
         public void Dispose()

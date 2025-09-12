@@ -12,7 +12,7 @@ public static class LocalApiSimulator
         return await Task.Run(async () =>
         {
             // Books
-            if (url.StartsWith("api/Books", StringComparison.OrdinalIgnoreCase) && data is Book book)
+            if (url.StartsWith("api/Books/", StringComparison.OrdinalIgnoreCase) && data is Book book)
                 return await BookService.AddBookAsync(FlowSide.Server, book) as ResultResolver<TResult>;
 
             // Members

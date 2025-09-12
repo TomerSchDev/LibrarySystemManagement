@@ -23,7 +23,7 @@ public static class SessionHelperService
             // Standard server logic using HTTP context for JWT
             var context = _httpContextAccessor?.HttpContext;
             var principal = context?.User;
-            if (principal == null) return null;
+            if (principal == null) return User.DefaultUser;
             var username = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                            ?? principal?.FindFirst("sub")?.Value
                            ?? principal?.FindFirst(ClaimTypes.Name)?.Value;
