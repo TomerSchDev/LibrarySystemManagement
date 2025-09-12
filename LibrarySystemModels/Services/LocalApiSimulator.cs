@@ -24,7 +24,7 @@ public static class LocalApiSimulator
                 return await ReportingService.AddReportAsync(FlowSide.Server, report) as ResultResolver<TResult>;
 
             // BorrowedBooks (IssueBookDto)
-            if (url.StartsWith("api/BorrowedBooks/issue", StringComparison.OrdinalIgnoreCase) && data is IssueBookDto dto)
+            if (url.StartsWith("api/Borrow/issue", StringComparison.OrdinalIgnoreCase) && data is IssueBookDto dto)
                 return await BorrowService.IssueBookAsync(FlowSide.Server, dto.BookId, dto.MemberId, dto.ReturnDate) as ResultResolver<TResult>;
 
             throw new NotImplementedException($"[LocalApiSimulator.InsertAsync] Route not mapped: {url}, type {typeof(TPayload).Name}");
@@ -49,7 +49,7 @@ public static class LocalApiSimulator
                 return await ReportingService.UpdateReportAsync(FlowSide.Server, report) as ResultResolver<TResult>;
 
             // BorrowedBooks (Return)
-            if (url.StartsWith("api/BorrowedBooks/return", StringComparison.OrdinalIgnoreCase))
+            if (url.StartsWith("api/Borrow/return", StringComparison.OrdinalIgnoreCase))
             {
                 int borrowId = ParseId(url);
                 return await BorrowService.ReturnBookAsync(FlowSide.Server, borrowId) as ResultResolver<TResult>;
@@ -128,7 +128,7 @@ public static class LocalApiSimulator
             }
 
             // BorrowedBooks history by member
-            if (url.StartsWith("api/BorrowedBooks/history/member/", StringComparison.OrdinalIgnoreCase))
+            if (url.StartsWith("api/Borrow/history/member/", StringComparison.OrdinalIgnoreCase))
             {
                 int memberId = ParseId(url);
                 return await BorrowService.GetBorrowHistoryByMemberIdAsync(FlowSide.Server, memberId) as
@@ -136,7 +136,7 @@ public static class LocalApiSimulator
             }
 
             // BorrowedBooks history by book
-            if (url.StartsWith("api/BorrowedBooks/history/book/", StringComparison.OrdinalIgnoreCase))
+            if (url.StartsWith("api/Borrow/history/book/", StringComparison.OrdinalIgnoreCase))
             {
                 int bookId = ParseId(url);
                 return await BorrowService.GetBorrowHistoryByBookIdAsync(FlowSide.Server, bookId) as
@@ -144,7 +144,7 @@ public static class LocalApiSimulator
             }
 
             // BorrowedBooks all history
-            if (url.Equals("api/BorrowedBooks/history/all", StringComparison.OrdinalIgnoreCase))
+            if (url.Equals("api/Borrow/history/all", StringComparison.OrdinalIgnoreCase))
                 return await BorrowService.GetBorrowHistoryEveryThingAsync(FlowSide.Server) as ResultResolver<TResult>;
 
             if (url.Equals("api/Auth/current", StringComparison.CurrentCulture))

@@ -12,7 +12,7 @@ public class IssueBookDto
 public class BorrowedBook : IExportable
 {
     public static readonly int ExtendDays = 14;
-    public int BorrowId { get; set; }
+    public int BorrowedBookID { get; set; }
     public int BookId { get; set; }
     public int MemberId { get; set; }
     public DateTime IssueDate { get; set; }

@@ -72,7 +72,7 @@ namespace LibrarySystemModels.Services
             var handler = DataBaseService.GetLocalDatabase();
 
             var borrows = await Task.Run(() => handler.SelectAll<BorrowedBook>());
-            var borrow = borrows.FirstOrDefault(b => b.BorrowId == borrowId);
+            var borrow = borrows.FirstOrDefault(b => b.BorrowedBookID == borrowId);
 
             if (borrow == null)
                 return new ResultResolver<BorrowedBook>(null!, false, "Borrow record not found");
@@ -111,7 +111,7 @@ namespace LibrarySystemModels.Services
             var handler = DataBaseService.GetLocalDatabase();
 
             var borrows = await Task.Run(() => handler.SelectAll<BorrowedBook>());
-            var borrow = borrows.FirstOrDefault(b => b.BorrowId == borrowId);
+            var borrow = borrows.FirstOrDefault(b => b.BorrowedBookID == borrowId);
 
             if (borrow == null)
                 return new ResultResolver<BorrowedBook>(null!, false, "Borrow record not found");
@@ -169,7 +169,7 @@ namespace LibrarySystemModels.Services
             var allBorrowedBooks = DataBaseService.GetLocalDatabase().SelectAll<BorrowedBook>();
             return allBorrowedBooks.Select(b => new BorrowedBookView
             {
-                BorrowID = b.BorrowId,
+                BorrowID = b.BorrowedBookID,
                 BookID = b.BookId,
                 MemberID = b.MemberId,
                 BorrowDate = b.IssueDate,

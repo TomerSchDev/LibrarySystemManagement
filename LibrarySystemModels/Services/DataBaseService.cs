@@ -8,7 +8,7 @@ namespace LibrarySystemModels.Services;
 public static class DataBaseService
 {
     private static RestApiConnector? RestApiConnector;
-    private static LocalDatabaseHandler LocalDatabaseHandler;
+    private static readonly AsyncLocal<LocalDatabaseHandler?> LocalDb = new();
 
     private static bool IsLocalMode { get; set; } 
     private static bool _isServerMode ;
@@ -26,8 +26,9 @@ public static class DataBaseService
 
 public static void Init(string? path)
     {
-        LocalDatabaseHandler = new LocalDatabaseHandler();
-        LocalDatabaseHandler.InitializeDatabase(path);
+        var localDatabaseHandler = new LocalDatabaseHandler();
+        localDatabaseHandler.InitializeDatabase(path);
+        LocalDb.Value = localDatabaseHandler;
         if (Initilized && (_isServerMode ||IsLocalMode))
         {
             return;
@@ -92,7 +93,7 @@ public static void Init(string? path)
             return await RestApiConnector.GetRequestAsync<TResult>(url);
     }
 
-    public static LocalDatabaseHandler GetLocalDatabase() => LocalDatabaseHandler;
+    public static LocalDatabaseHandler GetLocalDatabase() => LocalDb.Value;
 
     public static async Task<ResultResolver<User>> Login(string username, string password)
     {
