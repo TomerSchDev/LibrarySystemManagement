@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-;
+DataBaseService.InitLocalDb(null);
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -33,8 +33,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-DataBaseService.SetModes(true, false);
-DataBaseService.Init(null);
 var app = builder.Build();
 SessionHelperService.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
 /*

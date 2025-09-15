@@ -40,7 +40,9 @@ namespace Library_System_Management.Views
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
             var login = new LoginWindow();
+            Close();
             login.Show();
+            
         }
 
         private void BtnSearch_Click(object sender, RoutedEventArgs e)

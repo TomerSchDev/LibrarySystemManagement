@@ -11,9 +11,7 @@ namespace TestsLibrary
 
         public MemberServiceTests()
         {
-            _dbTestPath = Path.Combine("Resources", $"test_member_{Guid.NewGuid()}.sqlite");
-            DataBaseService.SetModes(false, true);
-            DataBaseService.Init(_dbTestPath);
+            Utils.setLocalTests(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
             Utils.LogInUser(null, FlowSide.Client);
         }
 

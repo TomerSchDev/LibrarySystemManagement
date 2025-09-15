@@ -45,5 +45,10 @@ public static class Utils
         SessionHelperService.Configure(accessor.Object);
 
     }
- 
+
+    public static void setLocalTests(string dbPath)
+    { 
+        DataBaseService.InitLocalDb(dbPath);
+        DataBaseService.SetDataServer(LocalApiSimulator.GetServer());
+    }
 }

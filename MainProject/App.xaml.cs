@@ -7,8 +7,7 @@ namespace Library_System_Management
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            DataBaseService.SetModes(false, false);
-            DataBaseService.Init(null);
+            DataBaseService.SetDataServer(LocalApiSimulator.GetServer());
             base.OnStartup(e);
         }
     }

@@ -7,15 +7,11 @@ namespace TestsLibrary
 {
     public class BookServiceTests : IDisposable
     {
-        private readonly string _dbTestPath;
 
         public BookServiceTests()
         {
             // Unique temp DB for isolation
-            _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
-            DataBaseService.SetModes(false,true);
-            DataBaseService.Init(_dbTestPath);
-            
+            Utils.setLocalTests(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
             Utils.LogInUser(null,FlowSide.Client);
         }
 
@@ -23,8 +19,6 @@ namespace TestsLibrary
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            if (File.Exists(_dbTestPath)) return;
-                //File.Delete(_dbTestPath);
         }
 
         private async Task<bool> AddBookAsync(Book book)

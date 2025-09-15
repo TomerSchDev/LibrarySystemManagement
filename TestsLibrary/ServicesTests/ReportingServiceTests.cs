@@ -7,13 +7,10 @@ namespace TestsLibrary
 {
     public class ReportingServiceTests : IDisposable
     {
-        private readonly string _dbTestPath;
 
         public ReportingServiceTests()
         {
-            _dbTestPath = Path.Combine("Resources", $"test_report_{Guid.NewGuid()}.sqlite");
-            DataBaseService.SetModes(false, true);
-            DataBaseService.Init(_dbTestPath);
+            Utils.setLocalTests(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
             Utils.LogInUser(null, FlowSide.Client);
         }
 

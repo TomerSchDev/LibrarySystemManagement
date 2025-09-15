@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace LibrarySystemModels.Database
 {
-    public class LocalDatabaseHandler : IDbHandler
+    public class LocalDatabaseHandler
     {
         private string _dbTestPath =
             FileRetriever.RetrieveFIlePath(Path.Combine("Resources", "LibraryDB.sqlite"));
@@ -50,7 +50,7 @@ namespace LibrarySystemModels.Database
             throw new NotImplementedException("Only using in Client Side With Rest API");
         }
 
-        public string Name => "Local";
+        public static string Name => "Local";
         
 
         // -------------------- Generic CRUD --------------------

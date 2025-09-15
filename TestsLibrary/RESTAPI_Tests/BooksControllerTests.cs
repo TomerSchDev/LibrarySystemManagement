@@ -12,16 +12,11 @@ namespace TestsLibrary.RESTAPI_Tests;
 
 public class BooksControllerTests : IDisposable
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-    private readonly string _dbTestPath;
     private readonly string _sessionToken;
     private readonly BooksController _controller;
-    public BooksControllerTests(ITestOutputHelper testOutputHelper)
+    public BooksControllerTests()
     {
-        _testOutputHelper = testOutputHelper;
-        _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
-        DataBaseService.SetModes(true, false);
-        DataBaseService.Init(_dbTestPath);
+        DataBaseService.InitLocalDb(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
         _controller = new BooksController();
         Utils.SetFakeUser(_controller,null);
 

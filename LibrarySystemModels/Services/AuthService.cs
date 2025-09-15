@@ -17,9 +17,7 @@ namespace LibrarySystemModels.Services
             }
 
             var user = await GetUserByUsernameAsync(FlowSide.Server, username);
-            Console.WriteLine($"User {user.Username} found.");
             var res = EncryptionService.VerifyHash(user, password);
-            Console.WriteLine($"Username {user.Username}  with password {password} is {res}");
             return res? user: User.DefaultUser;;
         }
 
@@ -32,7 +30,7 @@ namespace LibrarySystemModels.Services
                 return result.Data;
             }
 
-            var users = await Task.Run(() => DataBaseService.GetLocalDatabase().SelectAll<User>());
+            var users = await Task.Run(() => DataBaseService.GetLocalDatabase()?.SelectAll<User>());
             if (users.Count != 0) return users.FirstOrDefault(u => u.Username == username) ?? User.DefaultUser;
 
             var user = await SeedDefaultAdminAsync();

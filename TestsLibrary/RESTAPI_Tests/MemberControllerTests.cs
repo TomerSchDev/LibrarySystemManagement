@@ -19,10 +19,7 @@ public class MemberControllerTests : IDisposable
     
     public MemberControllerTests(ITestOutputHelper testOutputHelper)
     {
-        _testOutputHelper = testOutputHelper;
-        _dbTestPath = Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite");
-        DataBaseService.SetModes(true, false);
-        DataBaseService.Init(_dbTestPath);
+        DataBaseService.InitLocalDb(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
         _membersController = new MembersController();
         Utils.SetFakeUser(_membersController,null);
 

@@ -3,11 +3,16 @@ using LibrarySystemModels.Models;
 
 namespace LibrarySystemModels.Services;
 
-public static class LocalApiSimulator
+public class LocalApiSimulator : DataServers
 {
-    private static User _CurrentUser;
+    private  User? _currentUser;
+    private static LocalApiSimulator? _LocalApiSimulator;
+    public static DataServers GetServer()
+    {
+        return _LocalApiSimulator??new LocalApiSimulator();
+    }
     // INSERT (POST)
-    public static async Task<ResultResolver<TResult>?> InsertAsync<TResult, TPayload>(string url, TPayload data)
+    private async Task<ResultResolver<TResult>?> InsertAsync<TResult, TPayload>(string url, TPayload data)
     {
         return await Task.Run(async () =>
         {
@@ -32,7 +37,7 @@ public static class LocalApiSimulator
     }
 
     // UPDATE (PUT)
-    public static async Task<ResultResolver<TResult>?> UpdateAsync<TResult, TPayload>(string url, TPayload data)
+    private async Task<ResultResolver<TResult>?> UpdateAsync<TResult, TPayload>(string url, TPayload data)
     {
         return await Task.Run(async () =>
         {
@@ -49,18 +54,17 @@ public static class LocalApiSimulator
                 return await ReportingService.UpdateReportAsync(FlowSide.Server, report) as ResultResolver<TResult>;
 
             // BorrowedBooks (Return)
-            if (url.StartsWith("api/Borrow/return", StringComparison.OrdinalIgnoreCase))
-            {
-                int borrowId = ParseId(url);
-                return await BorrowService.ReturnBookAsync(FlowSide.Server, borrowId) as ResultResolver<TResult>;
-            }
+            if (!url.StartsWith("api/Borrow/return", StringComparison.OrdinalIgnoreCase))
+                throw new NotImplementedException(
+                    $"[LocalApiSimulator.UpdateAsync] Route not mapped: {url}, type {typeof(TPayload).Name}");
+            var borrowId = ParseId(url);
+            return await BorrowService.ReturnBookAsync(FlowSide.Server, borrowId) as ResultResolver<TResult>;
 
-            throw new NotImplementedException($"[LocalApiSimulator.UpdateAsync] Route not mapped: {url}, type {typeof(TPayload).Name}");
         });
     }
 
     // DELETE
-    public static async Task<ResultResolver<TResult>?> DeleteAsync<TResult>(string url)
+    private async Task<ResultResolver<TResult>?> DeleteAsync<TResult>(string url)
     {
         return await Task.Run(async () =>
         {
@@ -87,7 +91,7 @@ public static class LocalApiSimulator
     }
 
     // GET
-    public static async Task<ResultResolver<TResult>?> GetAsync<TResult>(string url)
+    private async Task<ResultResolver<TResult>?> GetAsync<TResult>(string url)
     {
         return await Task.Run(async () =>
         {
@@ -150,7 +154,7 @@ public static class LocalApiSimulator
             if (url.Equals("api/Auth/current", StringComparison.CurrentCulture))
             {
                 return await Task.Run(() =>
-                    new ResultResolver<User>(_CurrentUser, !User.IsDefaultUser(_CurrentUser), "") as
+                    new ResultResolver<User>(_currentUser, !User.IsDefaultUser(_currentUser), "") as
                         ResultResolver<TResult>);
             }
 
@@ -166,14 +170,41 @@ public static class LocalApiSimulator
     }
 
     // LOGIN stub (add your actual logic)
-    public static async Task<ResultResolver<User>> LoginAsync(string username, string password)
+    public override Task<ResultResolver<TResult>> GetRequestAsync<TResult>(string url)
+    {
+        return GetAsync<TResult>(url)!;
+    }
+
+    public override async Task<ResultResolver<User>> LoginAsync(string username, string password)
     {
         return await Task.Run(() =>
         {
             var user =  AuthService.LoginAsync(FlowSide.Server, username, password).Result;
-            _CurrentUser = user;
+            _currentUser = user;
             return User.IsDefaultUser(user) ? new ResultResolver<User>(user,false,"") : new ResultResolver<User>(user,true,"");
         });
+    }
+
+    public override Task<bool> Connect(string address)
+    {
+        return Task.FromResult(true);
+    }
+
+    public override string ServerTypeName() => "Local Server";
+
+    public override Task<ResultResolver<TResult>> PostRequestAsync<TResult, TPayload>(string url, TPayload payload)
+    {
+        return InsertAsync<TResult, TPayload>(url, payload)!;
+    }
+
+    public override Task<ResultResolver<TResult>> PutRequestAsync<TResult, TPayload>(string url, TPayload payload)
+    {
+        return UpdateAsync<TResult, TPayload>(url, payload)!;
+    }
+
+    public override Task<ResultResolver<TResult>> DeleteRequestAsync<TResult>(string url)
+    {
+        return DeleteAsync<TResult>(url)!;
     }
 }
 

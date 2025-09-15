@@ -7,13 +7,10 @@ namespace TestsLibrary
 {
     public class BorrowServiceTests : IDisposable
     {
-        private readonly string _dbTestPath;
 
         public BorrowServiceTests()
         {
-            _dbTestPath = Path.Combine("Resources", $"test_borrow_{Guid.NewGuid()}.sqlite");
-            DataBaseService.SetModes(false, true);
-            DataBaseService.Init(_dbTestPath);
+            Utils.setLocalTests(Path.Combine("Resources", $"test_{Guid.NewGuid()}.sqlite"));
             Utils.LogInUser(null,FlowSide.Client);
         }
 
