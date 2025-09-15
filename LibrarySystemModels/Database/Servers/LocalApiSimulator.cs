@@ -37,7 +37,7 @@ public class LocalApiSimulator : DataServers
     }
 
     // UPDATE (PUT)
-    private async Task<ResultResolver<TResult>?> UpdateAsync<TResult, TPayload>(string url, TPayload data)
+    private static async Task<ResultResolver<TResult>?> UpdateAsync<TResult, TPayload>(string url, TPayload data)
     {
         return await Task.Run(async () =>
         {
@@ -55,8 +55,7 @@ public class LocalApiSimulator : DataServers
 
             // BorrowedBooks (Return)
             if (!url.StartsWith("api/Borrow/return", StringComparison.OrdinalIgnoreCase))
-                throw new NotImplementedException(
-                    $"[LocalApiSimulator.UpdateAsync] Route not mapped: {url}, type {typeof(TPayload).Name}");
+                return new ResultResolver<TResult>();
             var borrowId = ParseId(url);
             return await BorrowService.ReturnBookAsync(FlowSide.Server, borrowId) as ResultResolver<TResult>;
 
@@ -64,7 +63,7 @@ public class LocalApiSimulator : DataServers
     }
 
     // DELETE
-    private async Task<ResultResolver<TResult>?> DeleteAsync<TResult>(string url)
+    private static async Task<ResultResolver<TResult>?> DeleteAsync<TResult>(string url)
     {
         return await Task.Run(async () =>
         {

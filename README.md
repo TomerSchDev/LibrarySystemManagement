@@ -1,158 +1,170 @@
 # Library Management System
 
-A comprehensive WPF desktop application for managing library operations, built with C# and .NET. This system provides role-based access control, book inventory management, member tracking, and borrowing/returning functionality.
+A comprehensive WPF desktop application for managing library operations, built with C# and .NET—**now supporting a remote database via REST API**. The system provides role-based access control, book inventory management, member tracking, borrowing/return functionality, and real-time, multi-client operation using a central server.
+
+---
 
 ## Features
 
-Core Functionality:
-- Book Management: Add, edit, delete, and search books with tracking of available copies
+**Core Functionality:**
+- Book Management: Add, edit, delete, and search books with tracking of available copies (via REST API)
 - Member Management: Register and manage library members with contact information
 - Borrow/Return System: Issue books to members and process returns with due date tracking
 - Search Functionality: Global search across books and members
 - Reporting System: Track all system activities with severity levels and user actions
 - Data Export: Export data to multiple formats (CSV, PDF, Email)
 
-Security & Access Control:
-- Role-Based Authentication: Three user roles with different permission levels:
-    - Admin: Full system access including user management and deletion operations
-    - Librarian: Can manage books, members, and handle borrowing/returning
-    - Member: Limited access to viewing and basic operations
-- Activity Logging: All critical actions are logged with severity levels (INFO, LOW, MEDIUM, HIGH, CRITICAL)
+**Security & Access Control:**
+- Role-Based Authentication
+    - Admin: Full access, including user management and deletions
+    - Librarian: Manage books, members, and borrowing/return
+    - Member: Limited to viewing and basic operations
+- Activity Logging: All critical actions logged with severity levels (INFO, LOW, MEDIUM, HIGH, CRITICAL)
 - Session Management: Secure session handling with permission verification
+
+---
+
+## What’s New: Remote DB & REST API Support
+
+> **The system now operates with a remote database, accessed only via RESTful API (ASP.NET Core Web API).**  
+> All data operations (books, members, users, borrows, etc.) are performed by sending secure HTTP requests to the API. This enables multi-user, distributed access and future scalability.
+
+**Key Benefits:**
+- No local database needed on client machines
+- Central source of truth for all library operations and synchronization
+- Server-side business logic, validation, and security
+- Easier cloud-based or networked deployment
+
+---
 
 ## Technical Stack
 
-- Framework: .NET with WPF (Windows Presentation Foundation)
-- Database: SQLite with Entity Framework
-- Language: C#
-- Architecture: MVVM (Model-View-ViewModel) pattern
-- Export Libraries:
-    - PdfSharpCore for PDF generation
-    - MailKit for email functionality
-    - Built-in CSV export
+- **Client:** .NET with WPF (Windows Presentation Foundation)
+- **Server:** ASP.NET Core Web API (RESTful, stateless)
+- **Database:**
+    - Remote SQL database (SQL Server, PostgreSQL, etc.) managed by the API server
+    - *Legacy mode:* Local SQLite (now deprecated)
+- **Language:** C#
+- **Architecture:**
+    - Client: MVVM (Model-View-ViewModel)
+    - Server: RESTful MVC
+- **Export Libraries:** PdfSharpCore (PDF), MailKit (email), built-in CSV export
+
+---
 
 ## Project Structure
+
 ```
 Library_System_Management/
-├── Models/                             # Data models and entities
-│   ├── Book.cs
-│   ├── BorrowedBook.cs
-│   ├── IExportable.cs
-│   ├── Member.cs
-│   ├── Report.cs
-│   ├── User.cs
-│   └── ViewModels/                     # View-specific models
-│       └── BorrowedBookView.cs
-├── Services/                           # Business logic layer
-│   └── ExportServices/                 # Data export functionality
-│       ├── CsvExportService.cs
-│       ├── IDataExportService.cs
-│       ├── MailExportService.cs
-│       └── PdfExportService.cs
-├── Views/                              # WPF windows and UI
-│   ├── LoginWindow.xaml
-│   ├── DashboardWindow.xaml
-│   ├── BookWindow.xaml
-│   ├── MembersWindow.xaml
-│   ├── IssueReturnWindow.xaml
-│   └── PopUpDialogs/                   # Dialog windows
-│       ├── AddBorrowWindow.xaml
-│       ├── AddEditBookWindow.xaml
-│       ├── AddEditMemberWindow.xaml
-│       ├── AddIssueBook.xaml
-│       ├── addNewUser.xaml
-│       └── EmailPromptWindow.xaml
-├── Database/                           # Database context and migrations
-│   └── DatabaseManager.cs
-├── Helpers/                            # Utility classes
-│   ├── ConfigHelper.cs
-│   ├── FileRetriever.cs
-│   └── RelayCommand.cs
-└── Resources/                          # Contains SQLite database file (LibraryDB.sqlite)
+├── LibrarySystemModels/ # Shared models, logic, helpers
+│ ├── Database/Helpers/Models/Services/
+│ └── LibrarySystemModels.csproj
+├── LibraryRestApi/ # REST API back-end
+│ ├── Controllers/ # BooksController, MembersController, etc.
+│ ├── appsettings.json
+│ └── LibraryRestApi.csproj
+├── MainProject/ # WPF Client
+│ ├── Views/ # Windows, dialogs (XAML)
+│ ├── ExportServices/
+│ ├── App.xaml
+│ └── Library_System_Management.csproj
+├── TestsLibrary/ # Unit, integration tests
+│ ├── RESTAPI_Tests/
+│ └── ServicesTests/
+├── Resources/ # (Legacy) SQLite DB, assets, etc.
+├── Dockerfile / compose.yaml # For API deployment (optional)
+├── README.md
+└── LICENSE
 ```
+
+---
+
 ## Installation & Setup
 
-Prerequisites:
+**Prerequisites:**
 - .NET 6.0 or higher
 - Visual Studio 2022 or compatible IDE
-- Windows OS (for WPF support)
+- Windows OS (for WPF app)
+- Docker (optional, for API deployment)
 
-Configuration:
-1. Clone the repository
-   2. Create an appsettings.local.json file in the project root with SMTP configuration for email exports:
-```
+### 1. Clone the Repository
+
+### 2. REST API Server Setup
+
+- Go to `LibraryRestApi` directory and build the project
+- Set DB connection string and settings in `appsettings.json` or `appsettings.Development.json`
+- Start the API server
+    - Via Visual Studio, `dotnet run`, or Docker
+    - Example:  
+      `dotnet run --project LibraryRestApi/LibraryRestApi.csproj`
+- *(Optional)* Use `Dockerfile` and `compose.yaml` for containerized deployment
+
+### 3. Client (WPF) Setup
+
+- In `MainProject`, create a file named `appsettings.local.json` with contents:
+    ```
     {
-      "Smtp": 
-      {
-          "Username": "your-email@gmail.com",
-          "Password": "your-app-password",
-          "Host": "smtp.gmail.com",
-          "Port": 587
+      "Smtp": {
+        "Username": "your-email@gmail.com",
+        "Password": "your-app-password",
+        "Host": "smtp.gmail.com",
+        "Port": 587
       }
     }
-```
-3. Build the solution to restore NuGet packages
-4. Run the application
+    ```
+- Build the entire solution to restore NuGet packages
+- Ensure the API server is running and reachable before launching the WPF app
+
+**Note:**
+- The client app will not function unless the API server is running and the URL configuration is correct.
+- Local SQLite support is deprecated in favor of the REST API backend.
+
+---
 
 ## Usage
 
-Login:
-- Start the application and log in with your credentials. The system supports multiple user roles with different access levels.
+- **Login:** Start the WPF app and log in (credentials validated via API)
+- **Main Dashboard:** View changes according to your user role
+- **Manage Books/Members, Issue/Return Books, Export Data:**  
+  All operations are performed as HTTP requests through the central server
 
-Main Dashboard:
-After login, you'll see the main dashboard with options based on your role:
-- Search Menu: Global search for books and members
-- Manage Books: Add, edit, view book inventory
-- Manage Members: Register and manage library members
-- Issue/Return Books: Handle book borrowing and returns
-- Reports: View system activity logs (permission-based)
-- Users: Manage system users (Admin only)
-
-Key Operations:
-
-Issuing a Book:
-1. Navigate to "Issue/Return Books"
-2. Click "Issue new Borrow"
-3. Select member and book
-4. Set return date
-5. Confirm the transaction
-
-Returning a Book:
-1. Go to "Issue/Return Books"
-2. Find the borrowed book in the current borrows list
-3. Click "Return" or double-click to open details
-4. Confirm the return
-
-Exporting Data:
-- Most data grids support export functionality:
-    - Click the "Export" button on any data view
-    - Choose export format (CSV, PDF, or Email)
-    - Specify filename and confirm
+---
 
 ## Security Features
 
-- Permission Checking: Every sensitive operation validates user permissions
-- Activity Logging: All actions are logged with timestamps and user information
-- Session Management: Secure session handling with role verification
-- Data Validation: Input validation and error handling throughout
+- All access controls enforced by the server
+- Activity logging on the API for all key actions
+- Secure session/token management
+- Data validation both client- and server-side
+
+---
 
 ## Database Schema
 
-The system uses SQLite with the following main tables:
-- Users: System users with roles and credentials
-- Books: Book inventory with quantities
-- Members: Library member information
-- BorrowedBooks: Transaction records for borrowing
-- Reports: Activity logs and system events
+Managed by the API server; main tables include:
+- Users: Credentials and roles
+- Books: Library inventory
+- Members: Member details
+- BorrowedBooks: Book loans/returns
+- Reports: Activity/event logs
+
+> **All modifications happen through the REST API—not directly from the client.**
+
+---
 
 ## Contributing
 
-This is an educational/demonstration project. Feel free to fork and modify for your needs.
+This is an educational/demonstration project. You are welcome to fork, modify, and extend!
+
+---
 
 ## License
 
 ![MIT License](https://img.shields.io/badge/license-MIT-green)
 
+---
+
 ## Support
 
-For issues or questions, please create an issue in the repository.
+Please open an issue in the repository for any help or questions.
+

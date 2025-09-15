@@ -44,7 +44,7 @@ namespace LibrarySystemModels.Services
 
             try
             {
-                await Task.Run(() => DataBaseService.GetLocalDatabase().Insert(borrowedBook));
+                await Task.Run(() => DataBaseService.GetLocalDatabase()?.Insert(borrowedBook));
                 return new ResultResolver<BorrowedBook>(borrowedBook, true, "");
             }
             catch (Exception ex)
@@ -71,7 +71,8 @@ namespace LibrarySystemModels.Services
             // Server logic (local DB)
             var handler = DataBaseService.GetLocalDatabase();
 
-            var borrows = await Task.Run(() => handler.SelectAll<BorrowedBook>());
+            var borrows = await Task.Run(() => handler?.SelectAll<BorrowedBook>());
+            if (borrows == null) return new ResultResolver<BorrowedBook>(new BorrowedBook(), false, "Error");
             var borrow = borrows.FirstOrDefault(b => b.BorrowedBookID == borrowId);
 
             if (borrow == null)
@@ -84,13 +85,14 @@ namespace LibrarySystemModels.Services
             borrow.ReturnedDate = DateTime.Now;
             try
             {
-                await Task.Run(() => handler.Update(borrow));
+                await Task.Run(() => handler?.Update(borrow));
                 return new ResultResolver<BorrowedBook>(borrow, true, "");
             }
             catch (Exception ex)
             {
                 return new ResultResolver<BorrowedBook>(borrow, false, "Error updating: " + ex.Message);
             }
+
         }
 
         public static async Task<ResultResolver<BorrowedBook>> ExtendBookAsync(FlowSide side, int borrowId,
